@@ -1,0 +1,4 @@
+enum DeepLinkError {
+  unknownAction,
+  missingCodeParameter,
+}

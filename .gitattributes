@@ -1,0 +1,7 @@
+# NOTE: singbox-tunnel.exe, windows/core/zenshield_core.dll, and
+# android/app/libs/ZenshieldBox.aar are intentionally NOT tracked here (LFS or
+# otherwise) in the open-source tree — they are built from public source repos
+# at build time. See windows/packaging/build_native.sh and
+# android/fetch_native.sh.
+macos/core/** filter=lfs diff=lfs merge=lfs -text
+

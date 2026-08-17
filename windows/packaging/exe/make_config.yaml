@@ -1,0 +1,15 @@
+app_id: 6934BB29-6603-4897-809E-61E6EBA8B095
+publisher: Geonode Pte Ltd
+publisher_url: https://zenshield.com/
+display_name: Zenshield VPN
+executable_name: Zenshield.exe
+output_base_file_name: Zenshield.exe
+create_desktop_icon: true
+launch_at_startup: true
+install_dir_name: "{autopf64}\\Zenshield"
+setup_icon_file: .\windows\runner\resources\app_icon.ico
+locales:
+  - en
+script_template: inno_setup.sas
+# Replace this locally before packaging a Windows installer — never commit a real value.
+code_sign_cert_thumbprint: "REPLACE_WITH_REAL_CERT_THUMBPRINT"

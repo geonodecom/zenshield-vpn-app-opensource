@@ -1,0 +1,12 @@
+## Copy this file to `android/key.properties` (gitignored) and fill in your own values.
+## Generate a keystore with: keytool -genkey -v -keystore your-release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias your-key-alias
+
+debugKeyAlias=androiddebugkey
+debugKeyPassword=android
+debugStoreFile=/path/to/debug.keystore
+debugStorePassword=android
+
+releaseKeyAlias=YOUR_RELEASE_KEY_ALIAS
+releaseKeyPassword=YOUR_RELEASE_KEY_PASSWORD
+releaseStoreFile=/path/to/your-release.jks
+releaseStorePassword=YOUR_RELEASE_STORE_PASSWORD

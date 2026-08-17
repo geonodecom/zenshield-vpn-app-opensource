@@ -1,0 +1,3 @@
+class OnServersUpdated {
+  const OnServersUpdated();
+}

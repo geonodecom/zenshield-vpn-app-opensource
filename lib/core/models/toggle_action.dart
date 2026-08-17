@@ -1,0 +1,1 @@
+enum ToggleAction { add, remove }

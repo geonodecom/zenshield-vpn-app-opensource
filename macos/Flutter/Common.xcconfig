@@ -1,0 +1,3 @@
+BUNDLE_IDENTIFIER = com.zenshield.vpn
+TUNNEL_BUNDLE_SUFFIX = networkextension
+SERVICE_IDENTIFIER=com.zenshield.vpn

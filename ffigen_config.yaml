@@ -1,0 +1,9 @@
+name: "ZenshieldNativeLibrary"
+description: "Bindings to Zenshield core"
+output: "lib/gen/zenshield_generated_bindings.dart"
+compiler-opts:
+  - "-fms-extensions"
+ignore-source-errors: true
+headers:
+  entry-points:
+    - "core/zenshield_core.h"

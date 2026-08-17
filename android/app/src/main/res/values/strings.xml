@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="status_default">Service not started</string>
+    <string name="status_starting">Service starting…</string>
+    <string name="status_stopping">Service stopping…</string>
+    <string name="status_started">Service started</string>
+
+    <string name="stop">Stop</string>
+
+    <string name="error_title">Error</string>
+
+    <string name="boot_restore_channel_name">VPN restore</string>
+    <string name="boot_restore_title">Zenshield VPN</string>
+    <string name="boot_restore_body">Reconnecting after restart. Tap to open.</string>
+</resources>

@@ -1,0 +1,78 @@
+# Miscellaneous
+OPEN_SOURCE_PLAN.md
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+.vscode/
+.cursor/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/dist/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+/packages/desktop_updater/example
+
+# Secrets / per-developer config.
+# NOTE: android/app/google-services.json, macos/Runner/GoogleService-Info.plist,
+# and lib/firebase_options.dart are intentionally NOT ignored — this repo
+# ships placeholder versions of all three (Android + Windows + macOS are the
+# platforms in scope) so the app builds and runs without any Firebase setup.
+# Run `flutterfire configure` to replace them with your own project's real
+# values. iOS is NOT part of this OSS release, so its plist stays ignored.
+ios/Runner/GoogleService-Info.plist
+android/app/*.jks
+android/key.properties
+windows/packaging/exe/make_config.local.yaml
+secrets.json
+# Local Hive/SQLite dev databases — one was found committed with a real API
+# key + user id baked in (geonode_sdk/prefsbox.hive), never let that recur.
+*.hive
+*.sqlite
+*.sqlite3
+
+# Native binaries built from public source repos at build time — see
+# windows/packaging/build_native.sh, android/fetch_native.sh, and
+# macos/fetch_native.sh
+/singbox-tunnel.exe
+/windows/runner/singbox-tunnel.exe
+/windows/core/zenshield_core.dll
+/android/app/libs/ZenshieldBox.aar
+/android/app/libs/ZenshieldBox-sources.jar
+/macos/zenshieldBox.xcframework/

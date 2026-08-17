@@ -1,0 +1,27 @@
+{
+    "logLevel": "debug",
+    "logsPath": "",
+    "remoteDns": "8.8.8.8",
+    "directDns": "local",
+    "tunImplementation": "gvisor",
+    "urlTestInterval": 3,
+    "clashApiToken": "placeholder-overridden-at-runtime",
+    "clashApiPort": 16756,
+    "paddingRange": [5500, 12000],
+    "outboundsLinks": [],
+    "routes": {
+      "direct": ["peer.repocket.com"],
+      "proxy": [],
+      "block": []
+    },
+    "geoSiteUrl": "",
+    "geoIpUrl": "",
+    "isMobile": true,
+    "socksInbound": {
+      "enabled": true,
+      "listen": "127.0.0.1",
+      "port": 10801,
+      "tag": "local-socks",
+      "direct": true
+    }
+  }

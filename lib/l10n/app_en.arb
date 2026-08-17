@@ -1,0 +1,228 @@
+{
+  "@@locale": "en",
+  "onboardingPage1Title": "A Free VPN Built on Trust",
+  "onboardingPage1Text": "Zenshield protects your privacy and stays free by securely sharing a small portion of unused bandwidth, never your personal data.",
+  "onboardingPage1TextIos": "Zenshield protects your privacy and keeps your online activity private. No subscription required.",
+  "onboardingPage2Title": "Privacy and Transparency",
+  "onboardingPage2Text": "Before continuing, please review and agree to our {eula}, {privacyPolicy}. Zenshield collects limited account information, such as your email address, to provide and secure the service.",
+  "@onboardingPage2Text": {
+    "placeholders": {
+      "eula": {
+        "type": "String"
+      },
+      "privacyPolicy": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingPage2Eula": "End User License Agreement (EULA)",
+  "onboardingPage2PrivacyPolicy": "Privacy Policy",
+  "onboardingPage2BandwidthSharingPolicy": "Bandwidth Sharing Policy",
+  "onboardingPage2TextAndroid": "Before continuing, please review and agree to our {eula}, {privacyPolicy} and {bandwidthSharingPolicy}. Zenshield collects limited account information, such as your email address, to provide and secure the service.",
+  "@onboardingPage2TextAndroid": {
+    "placeholders": {
+      "eula": {
+        "type": "String"
+      },
+      "privacyPolicy": {
+        "type": "String"
+      },
+      "bandwidthSharingPolicy": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingPage3Title": "Why Zenshield is Free",
+  "onboardingPage3Text": "Zenshield stays free because users share a small, encrypted portion of their unused internet connection. This shared bandwidth helps trusted businesses perform legitimate online tasks such as web indexing and data verification.\n\nYour personal data and browsing activity are never collected or exposed",
+  "onboardingPage3BandwidthSharing": "Bandwidth Sharing Policy",
+  "buttonContinue": "Continue",
+  "buttonAgreeAndContinue": "Agree & Continue",
+  "buttonIDisagree": "I Disagree",
+  "bandwidthSharingModalTitle": "Help Keep Zenshield Free",
+  "bandwidthSharingModalText1": "Bandwidth sharing is optional. You can use Zenshield without it — you can turn it on or off any time.",
+  "bandwidthSharingModalText2": "Zenshield stays free because users share a small, encrypted portion of their unused internet connection.",
+  "bandwidthSharingModalText3": "This shared bandwidth helps trusted businesses perform legitimate online tasks such as web indexing and data verification.",
+  "bandwidthSharingModalText4": "Your personal data and browsing activity are never collected or exposed. Learn more in our",
+  "bandwidthSharingModalButtonAgree": "I Agree",
+  "bandwidthSharingModalButtonSubtext": "Allow app to use idle resources for network boost",
+  "bandwidthSharingModalButtonNotNow": "Not now",
+  "emailHint": "Enter your Gmail",
+  "buttonLogin": "Login",
+  "buttonSignUp": "Sign Up",
+  "authLoginTitle": "Welcome back",
+  "authLoginSubtitle": "Sign in to continue to Zenshield",
+  "authSignUpTitle": "Create your account",
+  "authSignUpSubtitle": "Sign up to get started with Zenshield",
+  "authNoAccountPrompt": "Don't have an account? ",
+  "authHaveAccountPrompt": "Already have an account? ",
+  "emailAddressLabel": "Gmail",
+  "passwordHintEnter": "Enter your password",
+  "passwordHintCreate": "Create your password",
+  "passwordLabel": "Password",
+  "authPasswordOnlyLatinHint": "Only Latin characters (A-Z, a-z, 0-9, and special characters)",
+  "forgotPassword": "Forgot Password?",
+  "termsAgreement": "I agree to the End User License Agreement (EULA), Privacy Policy and Bandwidth Sharing Policy.",
+  "termsAgreementIos": "I agree to the End User License Agreement (EULA),\nPrivacy Policy.",
+  "orContinueWith": "Or continue with:",
+  "checkInboxTitle": "Check your inbox",
+  "checkInboxMessage": "We've sent a confirmation link to {email}",
+  "@checkInboxMessage": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "checkInboxSubtext": "Please verify your email to continue using Zenshield.",
+  "buttonOpenEmailApp": "Open email app",
+  "checkInboxErrorUnableToOpenEmailApp": "Unable to open email app",
+  "checkInboxErrorSessionDataMissing": "Session data is missing. Please register again.",
+  "checkInboxErrorUnknownAction": "Unknown action in deep link",
+  "checkInboxErrorMissingCodeParameter": "Missing code parameter in deep link",
+  "checkInboxErrorVerificationFailed": "Verification failed. Please try again.",
+  "homeTapAndHoldToDisconnect": "Tap and hold to\ndisconnect",
+  "homePause": "Disconnect",
+  "homeDisconnectConfirmTitle": "Turn off VPN?",
+  "homeDisconnectConfirmMessage": "You'll lose protection and your traffic won't be secured until you reconnect.",
+  "homeDisconnectConfirmKeepVpn": "Keep VPN on",
+  "homeDisconnectConfirmTurnOff": "Turn off",
+  "homeConnect": "Connect",
+  "homeZenSdkIsActive": "ZenSDK is active",
+  "homeZenSdkIsDisabled": "ZenSDK is disabled",
+  "homeConnected": "Connected",
+  "homeConnectionFailed": "Not Connected — Connection failed",
+  "homeConnectionIssue": "Connection issue",
+  "homeConnecting": "Connecting",
+  "homeDisconnecting": "Disconnecting",
+  "homeNotConnected": "Not connected",
+  "serversSearchLocation": "Search location",
+  "serversAutoSelect": "Auto select",
+  "serversAutoSelectEnabled": "Auto select enabled",
+  "serversAutoSelectSubtitle": "Best available server",
+  "serversAutoSelectFinding": "Finding best server...",
+  "serversAutoSelectUnavailable": "Server unavailable",
+  "serversClose": "Close",
+  "protocolsSearchProtocol": "Search Protocol",
+  "protocolsClose": "Close",
+  "protocolsRecommended": "(Recommended)",
+  "settingsSecuredSince": "Secured since {date}",
+  "@settingsSecuredSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsMain": "Main",
+  "settingsZenSDK": "ZenSDK",
+  "settingsZenSDKDescription": "Allow secure resource sharing",
+  "settingsVPNProtocolSelection": "VPN Protocol Selection",
+  "settingsVPNProtocolAutomatic": "Automatic",
+  "settingsLaunchOnStartup": "Launch on startup",
+  "settingsLaunchOnStartupDescription": "",
+  "settingsLaunchOnStartupFailed": "Failed to activate, please try again",
+  "settingsSocialMedia": "Zensheild on social media",
+  "settingsLogOut": "Log out",
+  "aboutTitle": "About Zenshield",
+  "aboutWhatIsZenshield": "What is Zenshield?",
+  "aboutWhatIsZenshieldDescription": "Zenshield is a free VPN that lets you access geo-restricted content, browse securely on public Wi-Fi, and keep your online activity private. No subscription required.",
+  "aboutBandwidthSharingTitle": "Bandwidth Sharing Policy",
+  "aboutBandwidthSharingDescription": "Zenshield is free because users contribute a small slice of their unused internet bandwidth to the Geonode data network. Your data is never accessed. Only network traffic is routed through your device.",
+  "aboutLegalAndSupportTitle": "Legal Policies",
+  "aboutPrivacyPolicy": "Privacy Policy",
+  "aboutTermsOfService": "Terms of Service",
+  "aboutSupportCenter": "Support Center",
+  "aboutBandwidthSharingPolicy": "Bandwidth Sharing Policy",
+  "aboutEndUserLicenseAgreement": "End User License Agreement",
+  "aboutTroubleshootingTitle": "Troubleshooting & Feedback",
+  "aboutEmailCopiedTitle": "Copied",
+  "aboutEmailCopiedToClipboard": "Email address copied to clipboard",
+  "changePasswordTitle": "Change Password",
+  "changePasswordDescription": "Create your new password for Zenshield VPN and type new password twice.",
+  "changePasswordNewPasswordLabel": "New Password",
+  "changePasswordNewPasswordHint": "Create your new password",
+  "changePasswordConfirmPasswordLabel": "Confirm New Password",
+  "changePasswordConfirmPasswordHint": "Confirm your new password",
+  "changePasswordButton": "Continue",
+  "changePasswordPasswordsDontMatch": "These passwords don't match",
+  "changePasswordSuccess": "Password changed successfully",
+  "changePasswordError": "Failed to change password",
+  "changePasswordSuccessTitle": "All set!",
+  "changePasswordSuccessMessage": "Your password is now updated",
+  "changePasswordSuccessButton": "Got it",
+  "rateAppPopupTitle": "Feeling safer with Zenshield?",
+  "rateAppPopupSubtitle": "Your review helps others stay safe online.",
+  "rateAppPopupFeedbackPrefix": "Got feedback? ",
+  "rateAppPopupFeedbackLink": "Tap here",
+  "rateAppPopupFeedbackSuffix": " to tell us directly.",
+  "updateRequiredPopupTitle": "Update Required",
+  "updateRequiredPopupMessage1": "Your current version of Zenshield VPN is\nout of date.",
+  "updateRequiredPopupMessage2": "Please install the latest version to\ncontinue using the app securely and\nwithout interruptions.",
+  "updateRequiredPopupButtonDownload": "Download Update",
+  "updateRequiredPopupButtonRemindLater": "Remind Me Later",
+  "resetPasswordTitle": "Reset Password",
+  "resetPasswordDescription": "Enter your e-mail and we will send you magic link for verification.",
+  "resetPasswordEmailDoesntExist": "E-Mail doesn't exist",
+  "resetPasswordEmailNotRegisteredTitle": "Email Not Found",
+  "resetPasswordEmailNotRegisteredText": "The email address you entered is not registered or not confirmed. Please check your email and try again.",
+  "loginFailedTitle": "Login Failed",
+  "loginErrorText": "Unable to sign in. Please check your internet connection and try again.",
+  "signUpFailedTitle": "Sign up Failed",
+  "signUpErrorText": "Unable to sign up. Please check your internet connection and try again.",
+  "authenticationFailedTitle": "Authentication Failed",
+  "wrongCredentialsText": "The email or password you entered is incorrect. Please try again.",
+  "invalidPasswordTitle": "Invalid Password",
+  "invalidPasswordText": "Password must meet the following requirements:\n\n• At least 8 characters long\n• Only Latin characters (A-Z, a-z, 0-9, and special characters)",
+  "invalidEmailTitle": "Invalid Email",
+  "invalidEmailText": "Please enter a valid email address.",
+  "emailEmploymentErrorTitle": "Email Employment Error",
+  "emailEmploymentErrorText": "The email you entered is already in use. Please try again.",
+  "appUpdateChecking": "Checking for updates…",
+  "appUpdateDownloading": "Downloading update",
+  "appUpdateInstalling": "Installing",
+  "appUpdateRestarting": "Restarting Zenshield",
+  "appUpdateError": "Couldn't update right now",
+  "appUpdateRetry": "Retry",
+  "appUpdateOpenAppAnyway": "Open app anyway",
+  "updateAvailablePopupTitle": "Update available",
+  "updateAvailablePopupMessage": "A new version is available",
+  "updateAvailablePopupButtonUpdate": "Update now",
+  "updateAvailablePopupButtonRemindLater": "Remind me later",
+  "updateAvailablePopupTimer": "Restarting in {time}",
+  "@updateAvailablePopupTimer": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "homeAppWasUpdated": "App was updated to version {version}",
+  "@homeAppWasUpdated": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "appTitle": "Zenshield",
+  "close_dialog_title": "Close Zenshield?",
+  "close_dialog_message": "You are currently connected to VPN. Do you want to disconnect and close the app?",
+  "close_dialog_positive_button": "Disconnect & Close",
+  "cancel": "Cancel",
+  "splash_error_title": "Error",
+  "splash_error_text": "An error occurred while initializing the app. Please try again or contact support.",
+  "contact_support": "Contact Support",
+  "deepLinkErrorTitle": "Verification Error",
+  "deepLinkErrorWrongAction": "Wrong action in deep link",
+  "ok": "OK",
+  "emailNotConfirmedOrRegisteredErrorTitle": "Email Not Confirmed or Registered",
+  "emailNotConfirmedOrRegisteredErrorText": "The email is not confirmed or registered. Please check your email or sign up.",
+  "resetPasswordErrorTitle": "Error",
+  "resetPasswordErrorText": "An error occurred. Please try again.",
+  "registrationErrorTitle": "Error",
+  "registrationErrorText": "The email you entered is already in use. Please try again.",
+  "systemExtensionErrorTitle": "System Extension Required",
+  "systemExtensionMessageSequoiaAndLater": "Go to System Settings and open the General tab. In the Login Items & Extensions section, scroll down to Network Extensions and select the\nⓘ icon. Turn on Zenshield Network Extension.",
+  "systemExtensionMessageSonomaAndEarlier": "Go to System Settings and open the Privacy & Security tab. Scroll down until you see \"System software from application Zenshield was blocked from loading\" and select Allow."
+}
+

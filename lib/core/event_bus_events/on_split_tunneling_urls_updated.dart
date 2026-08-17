@@ -1,0 +1,3 @@
+class OnSplitTunnelingUrlsUpdated {
+  const OnSplitTunnelingUrlsUpdated();
+}

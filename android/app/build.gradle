@@ -1,0 +1,115 @@
+plugins {
+    id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    // END: FlutterFire Configuration
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    namespace = "com.zenshield.vpn"
+    compileSdk = 36
+    
+    //compileSdk = flutter.compileSdkVersion
+    //ndkVersion = flutter.ndkVersion
+    //ndkVersion "28.0.13004108"
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled = true
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    signingConfigs {
+        debug {
+            keyAlias keystoreProperties['debugKeyAlias']
+            keyPassword keystoreProperties['debugKeyPassword']
+            storeFile keystoreProperties['debugStoreFile'] ? file(keystoreProperties['debugStoreFile']) : null
+            storePassword keystoreProperties['debugStorePassword']
+        }
+        release {
+            keyAlias keystoreProperties['releaseKeyAlias']
+            keyPassword keystoreProperties['releaseKeyPassword']
+            storeFile keystoreProperties['releaseStoreFile'] ? file(keystoreProperties['releaseStoreFile']) : null
+            storePassword keystoreProperties['releaseStorePassword']
+        }
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.zenshield.app"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = 24
+        targetSdk = 36
+        versionCode = 7
+        versionName = "1.0.5"
+
+
+        ndk {
+            abiFilters.clear()
+            abiFilters.addAll(["arm64-v8a"])
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig = signingConfigs.debug
+        }
+        release {
+            signingConfig = signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // No manual `splits { abi {...} }` here: Flutter's own build already
+    // manages per-ABI native code (libapp.so/libflutter.so/native plugin
+    // .so files) based on --target-platform / --split-per-abi passed to
+    // `flutter build apk`. A Gradle-level splits.abi filter narrower than
+    // what Flutter prepares conflicts with AGP's own abiFilters inference
+    // ("Conflicting configuration ... in ndk abiFilters cannot be present
+    // when splits abi filters are set"). Restrict the ABI from the Flutter
+    // CLI instead, e.g.:
+    //   flutter build apk --release --target-platform android-arm64
+    // or to get one APK per ABI, matching the old intent of this block:
+    //   flutter build apk --release --split-per-abi
+
+    buildFeatures {
+        buildConfig = true
+    }
+    
+}
+
+flutter {
+    source = "../.."
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+
+    implementation "com.github.fingerprintjs:fingerprint-android:2.2.0"
+    implementation "androidx.core:core-ktx:1.15.0"
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.8.7"
+    implementation "androidx.work:work-runtime-ktx:2.10.0"
+    implementation "com.google.code.gson:gson:2.10.1"
+    implementation "com.google.android.gms:play-services-base:18.5.0"
+    implementation "com.google.android.play:review:2.0.2"
+}

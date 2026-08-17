@@ -16,3 +16,41 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
+
+  build-android:
+    # Actually compiles the app, including the native VPN core — catches
+    # Gradle/native-build breakage that `flutter analyze`/`flutter test`
+    # above never touch (e.g. a google-services.json package mismatch, or a
+    # gomobile bind flag drifting from what the Kotlin code expects).
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/27.0.12077973
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+      - name: Install Android NDK
+        run: sdkmanager --install "ndk;27.0.12077973"
+      - name: Install gomobile (sagernet fork — see android/fetch_native.sh header)
+        run: |
+          go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.8
+          go install github.com/sagernet/gomobile/cmd/gobind@v0.1.8
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: gomobile init
+        run: gomobile init
+      - run: flutter pub get
+      - name: Build native VPN core (android/app/libs/ZenshieldBox.aar)
+        run: android/fetch_native.sh
+      - name: Generate debug keystore + key.properties
+        run: |
+          keytool -genkey -v -keystore "$HOME/.android/debug.keystore" \
+            -storepass android -alias androiddebugkey -keypass android \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+          cp android/key.properties.example android/key.properties
+          sed -i "s|/path/to/debug.keystore|$HOME/.android/debug.keystore|" android/key.properties
+      - run: flutter build apk --debug

@@ -1,6 +1,6 @@
 # ZenShield VPN
 
-A Flutter VPN app (Android + Windows + macOS) built on [sing-box](https://github.com/SagerNet/sing-box).
+A Flutter VPN app (Android + iOS + Windows + macOS) built on [sing-box](https://github.com/SagerNet/sing-box).
 
 ## 1. Prerequisites
 
@@ -10,10 +10,11 @@ Install these before anything else:
 |---|---|
 | [Flutter SDK 3.35.6](https://docs.flutter.dev/release/archive) (stable) | Everything — newer versions may cause build errors |
 | Go 1.24+ | Building native binaries (all platforms) |
-| Android SDK + NDK, `gomobile` | Building the Android native binary |
+| `gomobile`/`gobind` from `github.com/sagernet/gomobile@v0.1.8` (not vanilla `golang.org/x/mobile`) | Building the Android/iOS/macOS native binaries — see §6 for why the fork matters |
+| Android SDK + NDK | Building the Android native binary |
 | mingw-w64 (`x86_64-w64-mingw32-gcc`) | Building the Windows native binary from Linux/macOS |
 | Visual Studio (Desktop C++ workload) | Building/running the Windows app itself |
-| Xcode, `gomobile` | Building the macOS native binary — macOS host only, can't cross-compile |
+| Xcode | Building the iOS/macOS native binaries — macOS host only, can't cross-compile |
 
 Run `flutter doctor` after installing to confirm your setup.
 
@@ -31,11 +32,12 @@ flutter pub get
 #    won't build/connect without these). Each is a one-time step; re-run
 #    only when you want to update the tunnel core.
 android/fetch_native.sh              # for Android
+ios/fetch_native.sh                  # for iOS
 windows/packaging/build_native.sh    # for Windows
 macos/fetch_native.sh                # for macOS
 
 # 4. Run it
-flutter run -d android   # or: flutter run -d windows / flutter run -d macos
+flutter run -d android   # or: flutter run -d ios / flutter run -d windows / flutter run -d macos
 ```
 
 At this point the app **builds, runs, and connects the VPN tunnel** with no
@@ -95,12 +97,26 @@ key above degrades gracefully to "feature off," so nothing breaks.
 ## 4. Optional: Firebase setup (crash reporting)
 
 This repo ships **placeholder** `android/app/google-services.json`,
-`macos/Runner/GoogleService-Info.plist`, and `lib/firebase_options.dart` so
-the app works with zero Firebase setup on any platform — app runs normally,
-Crashlytics crash reporting is just silently disabled.
+`ios/Runner/GoogleService-Info.plist`, `macos/Runner/GoogleService-Info.plist`,
+and `lib/firebase_options.dart` so the app works with zero Firebase setup on
+any platform — app runs normally, Crashlytics crash reporting is just
+silently disabled.
 `lib/main.dart`'s `_setupFirebase()` detects the placeholder config failing
 to initialize and skips every Crashlytics call afterward instead of
 throwing — a missing/invalid Firebase setup can never crash the app.
+
+**Important — these files must always be updated together, never by hand:**
+`lib/main.dart` calls `Firebase.initializeApp(options:
+DefaultFirebaseOptions.currentPlatform)`, i.e. it always uses the explicit
+values from `lib/firebase_options.dart` — it does **not** fall back to
+reading `google-services.json`/`GoogleService-Info.plist` natively (that
+native-auto-config approach doesn't work here anyway since this app also
+targets Web, which has no such file to read from). So editing only
+`google-services.json` (or only the `.plist`) and leaving
+`firebase_options.dart` as the placeholder will not enable Firebase — it'll
+still silently no-op. Always use `flutterfire configure` (below), which
+regenerates every platform's file together, consistently, from one real
+project. Don't hand-edit any of them.
 
 **Step by step, to set up your own project and enable real crash reporting:**
 
@@ -114,13 +130,13 @@ throwing — a missing/invalid Firebase setup can never crash the app.
    ```bash
    flutterfire configure
    ```
-   Pick the Firebase project you just created, then select **android and
-   macos** when it asks which platforms to configure (this repo doesn't
-   ship iOS). This automatically writes a real `lib/firebase_options.dart`
-   and downloads a real `android/app/google-services.json` +
-   `macos/Runner/GoogleService-Info.plist` — you don't need to touch any of
+   Pick the Firebase project you just created, then select **android, ios,
+   and macos** when it asks which platforms to configure. This automatically
+   writes a real `lib/firebase_options.dart` and downloads a real
+   `android/app/google-services.json` + `ios/Runner/GoogleService-Info.plist`
+   + `macos/Runner/GoogleService-Info.plist` — you don't need to touch any of
    these files by hand.
-5. Rebuild: `flutter run -d android` (or `-d macos`). Crashes now show up in
+5. Rebuild: `flutter run -d android` (or `-d ios` / `-d macos`). Crashes now show up in
    Firebase Console → Crashlytics.
 
 **Optional follow-up — Google Sign-In under your own project:** in Firebase
@@ -196,6 +212,11 @@ The sing-box tunnel core and its wrappers are **not committed to this repo**
 - **Android** (`android/app/libs/ZenshieldBox.aar`) — the Kotlin code
   imports classes from it directly, so the build *fails* without it, not
   just at runtime.
+- **iOS** (`ios/ZenshieldBox.xcframework`) — same situation as Android: Swift
+  code in `ios/Tunnel/` links against it directly, so Xcode builds *fail*
+  without it. `ios/fetch_native.sh` mirrors the upstream Makefile's own
+  `ios:` build target exactly (package, tags, target, ldflags), just renamed
+  to match what `ios/Runner.xcodeproj` references.
 - **Windows** (`singbox-tunnel.exe` at repo root, `windows/core/zenshield_core.dll`)
   — needed for the VPN connection to work at runtime; the app still compiles
   without them.
@@ -204,11 +225,21 @@ The sing-box tunnel core and its wrappers are **not committed to this repo**
   directly, so Xcode builds *fail* without it. `macos/fetch_native.sh`
   reconstructs the exact `gomobile bind` flags by matching the previously
   committed framework's structure (there's no known-good reference command
-  for this exact target in the upstream Makefile) — verify the rebuilt
-  framework actually works before relying on it.
+  for this exact target in the upstream Makefile, unlike iOS above) —
+  verified working as of this writing, but re-verify if this command ever
+  changes.
 
-All three scripts accept an optional tag/commit to pin an exact version
+All four scripts accept an optional tag/commit to pin an exact version
 (e.g. `android/fetch_native.sh v1.2.0`) — recommended for reproducible builds.
+
+All four also need `gomobile`/`gobind` installed from the
+`github.com/sagernet/gomobile` fork (`v0.1.8`), not vanilla
+`golang.org/x/mobile` — the Android Kotlin code calls low-level Go
+reference-management APIs (`Seq.destroyRef`, `refnum`) that vanilla
+gomobile's generated bindings no longer expose publicly, so vanilla gomobile
+breaks the Android build specifically. iOS/macOS builds don't hit that same
+issue (their Swift code doesn't touch those APIs), but use the same fork
+here too since that's the toolchain actually tested against.
 
 Three source repos must be public for these scripts to work:
 `zenshield-windows-service`, `zenshield-singbox-geonode-sdk-patch`, and

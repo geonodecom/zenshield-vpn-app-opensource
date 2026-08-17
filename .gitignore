@@ -35,6 +35,7 @@ migrate_working_dir/
 .pub/
 /dist/
 /build/
+android/build/
 
 # Symbolication related
 app.*.symbols
@@ -68,11 +69,12 @@ secrets.json
 *.sqlite3
 
 # Native binaries built from public source repos at build time — see
-# windows/packaging/build_native.sh, android/fetch_native.sh, and
-# macos/fetch_native.sh
+# windows/packaging/build_native.sh, android/fetch_native.sh,
+# macos/fetch_native.sh, and ios/fetch_native.sh
 /singbox-tunnel.exe
 /windows/runner/singbox-tunnel.exe
 /windows/core/zenshield_core.dll
 /android/app/libs/ZenshieldBox.aar
 /android/app/libs/ZenshieldBox-sources.jar
 /macos/zenshieldBox.xcframework/
+/ios/ZenshieldBox.xcframework/

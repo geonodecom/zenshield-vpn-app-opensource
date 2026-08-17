@@ -51,6 +51,9 @@ clone_ref "$SINGBOX_FORK_REPO" "$WORK_DIR/zenshield-singbox-geonode-sdk-patch"
 clone_ref "$SINGBOX_UTILS_REPO" "$WORK_DIR/zenshield-singbox-utils"
 (
   cd "$WORK_DIR/zenshield-singbox-geonode-sdk-patch"
+  # go.mod's replace still points at a private pre-open-source repo path;
+  # repoint it at the local sibling checkout above.
+  go mod edit -replace github.com/npvpn/singboxUtils=../zenshield-singbox-utils
   mkdir -p "$ROOT_DIR/windows/core"
   WINDOWS_CC="${WINDOWS_CC:-x86_64-w64-mingw32-gcc}"
   GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC="$WINDOWS_CC" go build \

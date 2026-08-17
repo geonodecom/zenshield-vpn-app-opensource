@@ -1,8 +1,0 @@
-framework module "ZenshieldBox" {
-	header "ref.h"
-    header "Libbox.objc.h"
-    header "Universe.objc.h"
-    header "ZenshieldBox.h"
-
-    export *
-}

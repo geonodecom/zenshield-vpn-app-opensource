@@ -4,19 +4,19 @@
 # was ~67MB, raw-committed (not even Git LFS), which is exactly the
 # repo-bloat problem the Android .aar had too.
 #
-# NOTE ON ACCURACY: the exact `gomobile bind` flags below are reconstructed
-# by matching the structure of the previously-committed xcframework (single
-# slice: macos-arm64_x86_64, framework name ZenshieldBox, internal ObjC
-# prefix Libbox — i.e. same underlying package as the iOS build, just a
-# different -target). The upstream Makefile's checked-in `ios:` target only
-# covers `-target=ios,iossimulator`, not macos, so there is no known-good
-# reference command for this specific target — verify the output matches
-# before relying on it, and fix the flags below if it doesn't.
+# Verified working: produces a single macos-arm64_x86_64 slice with the
+# expected Libbox-prefixed Objective-C headers, matching what
+# macos/Runner.xcodeproj links against (the upstream Makefile's checked-in
+# targets don't cover macos, so these flags were reconstructed by matching
+# the previously-committed xcframework's structure — re-verify if this
+# gomobile bind command is changed).
 #
-# Requirements: Go 1.24+, Xcode, gomobile (macOS host only — gomobile bind
-# for Apple targets cannot cross-compile from Linux/Windows):
-#   go install golang.org/x/mobile/cmd/gomobile@latest
-#   go install golang.org/x/mobile/cmd/gobind@latest
+# Requirements: Go 1.24+, Xcode, gomobile — specifically the sagernet/gomobile
+# fork the singbox fork's go.mod is pinned to (v0.1.8), not vanilla
+# golang.org/x/mobile (macOS host only — gomobile bind for Apple targets
+# cannot cross-compile from Linux/Windows):
+#   go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.8
+#   go install github.com/sagernet/gomobile/cmd/gobind@v0.1.8
 #   gomobile init
 #
 # Usage: macos/fetch_native.sh [<tag-or-commit>]
@@ -52,6 +52,9 @@ clone_ref "$SINGBOX_UTILS_REPO" "$WORK_DIR/zenshield-singbox-utils"
 echo "==> Building zenshieldBox.xcframework with gomobile bind (this takes a while)"
 (
   cd "$WORK_DIR/zenshield-singbox-geonode-sdk-patch"
+  # go.mod's replace still points at a private pre-open-source repo path;
+  # repoint it at the local sibling checkout above.
+  go mod edit -replace github.com/npvpn/singboxUtils=../zenshield-singbox-utils
   gomobile bind -v \
     -target=macos \
     -tags "with_gvisor with_quic with_wireguard with_utls with_clash_api with_grpc with_dhcp with_low_memory with_conntrack" \

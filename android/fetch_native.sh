@@ -5,9 +5,13 @@
 # directly, and not worth a Git LFS bandwidth budget either.
 #
 # Requirements: Go 1.24+, Android SDK + NDK (ANDROID_HOME / ANDROID_NDK_HOME
-# set), and gomobile:
-#   go install golang.org/x/mobile/cmd/gomobile@latest
-#   go install golang.org/x/mobile/cmd/gobind@latest
+# set), and gomobile — specifically the sagernet/gomobile fork the singbox
+# fork's go.mod is pinned to (v0.1.8), not vanilla golang.org/x/mobile: the
+# app's Kotlin service code calls Seq.destroyRef()/refnum directly to force
+# early release of native refs, and those are only exposed as public/
+# accessible by this fork's generated bindings.
+#   go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.8
+#   go install github.com/sagernet/gomobile/cmd/gobind@v0.1.8
 #   gomobile init
 #
 # Usage: android/fetch_native.sh [<tag-or-commit>]
@@ -43,8 +47,11 @@ clone_ref "$SINGBOX_UTILS_REPO" "$WORK_DIR/zenshield-singbox-utils"
 echo "==> Building ZenshieldBox.aar with gomobile bind (this takes a while)"
 (
   cd "$WORK_DIR/zenshield-singbox-geonode-sdk-patch"
+  # go.mod's replace still points at a private pre-open-source repo path;
+  # repoint it at the local sibling checkout above.
+  go mod edit -replace github.com/npvpn/singboxUtils=../zenshield-singbox-utils
   gomobile bind -v -androidapi=21 \
-    -javapkg=com.vpnapp.zenshield.libbox \
+    -javapkg=com.vpnapp.zenshield \
     -libname=ZenshieldBox \
     -tags "with_gvisor with_quic with_wireguard with_utls with_clash_api with_grpc with_dhcp with_low_memory with_conntrack" \
     -trimpath \

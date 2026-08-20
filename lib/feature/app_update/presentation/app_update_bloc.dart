@@ -138,8 +138,8 @@ class AppUpdateBloc
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState appState) {
-    if (appState == AppLifecycleState.resumed) {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
       add(const AppResumedEvent());
     }
   }

@@ -17,6 +17,7 @@ import 'package:zenshield/feature/auth/presentation/widgets/auth_primary_button.
 import 'package:zenshield/feature/auth/presentation/widgets/auth_social_login_row.dart';
 import 'package:zenshield/feature/check_inbox/presentation/check_inbox_args.dart';
 import 'package:zenshield/feature/check_inbox/presentation/check_inbox_view.dart';
+import 'package:zenshield/feature/geonode_key_setup/presentation/geonode_key_setup_view.dart';
 import 'package:zenshield/feature/home/presentation/home_view.dart';
 import 'package:zenshield/feature/onboarding_progress/presentation/onboarding_progress_view.dart';
 import 'package:zenshield/core/utils/mixins.dart';
@@ -60,6 +61,12 @@ class AuthView extends StatelessWidget {
                 OnboardingProgressView.routeName,
                 arguments: sideEffect.agreementsResponse,
               );
+            }
+          } else if (sideEffect is AuthNavigateToGeonodeKeySetup) {
+            if (context.mounted) {
+              await Navigator.of(
+                context,
+              ).pushReplacementNamed(GeonodeKeySetupView.routeName);
             }
           } else if (sideEffect is AuthNavigateToSignUp) {
             final authBloc = context.read<AuthBloc>();

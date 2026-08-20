@@ -10,6 +10,7 @@ import 'package:zenshield/core/event_bus_events/on_forgot_password_verification_
 import 'package:zenshield/core/managers/analytics_events.dart';
 import 'package:zenshield/core/managers/analytics_manager.dart';
 import 'package:zenshield/core/managers/appsflyer_manager.dart';
+import 'package:zenshield/core/preferences.dart';
 import 'package:zenshield/di/injection_container.dart';
 import 'package:zenshield/core/utils/utils.dart';
 import 'package:zenshield/core/utils/platform_utils.dart';
@@ -91,6 +92,22 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
   final AbstractAgreementUseCase _agreementUseCase;
   final EventBus _eventBus;
   final AbstractLoginErrorMessageUseCase _loginErrorMessageUseCase;
+
+  /// When the backend reports no pending agreement, that can only mean this
+  /// account/device already accepted before (declining is client-only, never
+  /// sent to the backend — see AuthBloc's bandwidth-sharing decline and
+  /// OnboardingProgressBloc._onBandwidthSharingDeclined). Re-sync the local
+  /// flag — it may have been reset (reinstall, new device) — then route to
+  /// the Geonode key-setup screen if the build/device still needs those
+  /// keys, same as SplashBloc does for an already-authorized relaunch.
+  Future<AuthSideEffect> _homeOrGeonodeKeySetupSideEffect() async {
+    final preferences = getIt<Preferences>();
+    await preferences.setZenSdkEnabled(true);
+    if (await preferences.shouldPromptGeonodeKeySetup) {
+      return AuthNavigateToGeonodeKeySetup();
+    }
+    return AuthNavigateToHome();
+  }
 
   // Subscriptions
   StreamSubscription<OnDeepLinkError>? _deepLinkErrorSubscription;
@@ -262,7 +279,7 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
           .getAgreementsResponse();
 
       if (agreementsResponse.agreement == null) {
-        produceSideEffect(AuthNavigateToHome());
+        produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
         return;
       }
 
@@ -498,7 +515,7 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
           .getAgreementsResponse();
 
       if (agreementsResponse.agreement == null) {
-        produceSideEffect(AuthNavigateToHome());
+        produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
         return;
       }
 
@@ -545,7 +562,7 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
           .getAgreementsResponse();
 
       if (agreementsResponse.agreement == null) {
-        produceSideEffect(AuthNavigateToHome());
+        produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
         return;
       }
 
@@ -588,7 +605,7 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
           .getAgreementsResponse();
 
       if (agreementsResponse.agreement == null) {
-        produceSideEffect(AuthNavigateToHome());
+        produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
         return;
       }
 
@@ -747,7 +764,7 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
         return;
       }
 
-      produceSideEffect(AuthNavigateToHome());
+      produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
     } catch (e, stackTrace) {
       _logger.error('Failed to verify code', e, stackTrace);
       produceSideEffect(ShowDeepLinkVerificationError());

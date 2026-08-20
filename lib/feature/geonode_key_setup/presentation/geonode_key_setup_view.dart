@@ -48,6 +48,12 @@ class _GeonodeKeySetupViewState extends State<GeonodeKeySetupView> {
 
   Future<void> _navigateHome() async {
     if (!mounted) return;
+    // Dismiss the keyboard before navigating — HomeView's layout has no
+    // Expanded/scroll fallback, so if it briefly renders while the keyboard
+    // is still animating closed (less height available than normal), its
+    // fixed-height content overflows for a frame. Unfocusing here lets the
+    // keyboard finish closing before the route actually changes.
+    FocusScope.of(context).unfocus();
     await Navigator.of(context).pushReplacementNamed(HomeView.routeName);
   }
 

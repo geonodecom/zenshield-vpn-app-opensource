@@ -270,10 +270,12 @@ class _HomeContentState extends State<_HomeContent> with AnalyticsEventSender {
     final isAutoUnhealthy =
         showAutoPlaceholder && isConnected && appState.tunnelHealthy == false;
 
-    final autoResolvedCountryCode =
-        isAutoHealthy ? appState.selectedServer?.region.countryCode : null;
-    final autoResolvedFlagUrl =
-        isAutoHealthy ? appState.selectedServer?.region.flagImage : null;
+    final autoResolvedCountryCode = isAutoHealthy
+        ? appState.selectedServer?.region.countryCode
+        : null;
+    final autoResolvedFlagUrl = isAutoHealthy
+        ? appState.selectedServer?.region.flagImage
+        : null;
     final autoResolvedCountryName = autoResolvedCountryCode != null
         ? (CountryLocalizations.of(context)?.countryName(
                 countryCode: autoResolvedCountryCode.toUpperCase(),
@@ -283,13 +285,14 @@ class _HomeContentState extends State<_HomeContent> with AnalyticsEventSender {
     final autoSubtitle = isAutoSearching
         ? (l10n?.serversAutoSelectFinding ?? 'Finding best server...')
         : isAutoUnhealthy
-            ? (l10n?.serversAutoSelectUnavailable ?? 'Server unavailable')
-            : (autoResolvedCountryName ??
-                (l10n?.serversAutoSelectSubtitle ?? 'Best available server'));
+        ? (l10n?.serversAutoSelectUnavailable ?? 'Server unavailable')
+        : (autoResolvedCountryName ??
+              (l10n?.serversAutoSelectSubtitle ?? 'Best available server'));
 
     final ip = showAutoPlaceholder ? null : appState.selectedServer?.ip;
-    final flagUrl =
-        showAutoPlaceholder ? null : appState.selectedServer?.region.flagImage;
+    final flagUrl = showAutoPlaceholder
+        ? null
+        : appState.selectedServer?.region.flagImage;
     final countryCode = showAutoPlaceholder
         ? null
         : appState.selectedServer?.region.countryCode;
@@ -306,81 +309,118 @@ class _HomeContentState extends State<_HomeContent> with AnalyticsEventSender {
         child: Stack(
           children: [
             const _Background(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildHeader(homeBloc),
-                  const SizedBox(height: 24),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      ConnectionStatusBadge(),
-                      const SizedBox(height: 10),
-                      Text(
-                        homeState.timerValue,
-                        style: appTextStyles
-                            .helveticaNeueRegular60(color: appColors.black)
-                            .copyWith(
-                              letterSpacing: 1.5,
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
+            // LayoutBuilder + SingleChildScrollView + ConstrainedBox(minHeight)
+            // + IntrinsicHeight: normally the Column fills the full height
+            // exactly as before (spaceBetween behaves identically), but if
+            // less height is ever available than this content needs — e.g. a
+            // frame or two while the keyboard is still animating closed after
+            // returning from a screen with a text field focused — it becomes
+            // scrollable instead of throwing a RenderFlex overflow.
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _buildHeader(homeBloc),
+                            const SizedBox(height: 24),
+                            Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                ConnectionStatusBadge(),
+                                const SizedBox(height: 10),
+                                Text(
+                                  homeState.timerValue,
+                                  style: appTextStyles
+                                      .helveticaNeueRegular60(
+                                        color: appColors.black,
+                                      )
+                                      .copyWith(
+                                        letterSpacing: 1.5,
+                                        fontFeatures: const [
+                                          FontFeature.tabularFigures(),
+                                        ],
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 45),
                               ],
                             ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 45),
-                    ],
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Transform.translate(
-                        offset: const Offset(0, -28),
-                        child: ConnectButton(
-                          onTap: () async {
-                            if (appState.connectionStatus ==
-                                const Disconnected()) {
-                              appBloc.add(const app.TurnOnVpnTappedEvent());
-                            } else if (appState.connectionStatus ==
-                                const Connected()) {
-                              final confirmed =
-                                  await _showDisconnectConfirmDialog(context);
-                              if (context.mounted && confirmed == true) {
-                                appBloc.add(const app.TurnOffVpnTappedEvent());
-                              }
-                            }
-                          },
-                          onLongPress: () {},
+                            Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Transform.translate(
+                                  offset: const Offset(0, -28),
+                                  child: ConnectButton(
+                                    onTap: () async {
+                                      if (appState.connectionStatus ==
+                                          const Disconnected()) {
+                                        appBloc.add(
+                                          const app.TurnOnVpnTappedEvent(),
+                                        );
+                                      } else if (appState.connectionStatus ==
+                                          const Connected()) {
+                                        final confirmed =
+                                            await _showDisconnectConfirmDialog(
+                                              context,
+                                            );
+                                        if (context.mounted &&
+                                            confirmed == true) {
+                                          appBloc.add(
+                                            const app.TurnOffVpnTappedEvent(),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    onLongPress: () {},
+                                  ),
+                                ),
+                                SizedBox(height: 60),
+                                HomeServerItem(
+                                  cityName: showAutoPlaceholder ? '' : cityName,
+                                  countryCode: countryCode ?? '',
+                                  countryName: showAutoPlaceholder
+                                      ? (l10n?.serversAutoSelect ??
+                                            'Auto select')
+                                      : CountryLocalizations.of(
+                                              context,
+                                            )?.countryName(
+                                              countryCode:
+                                                  countryCode?.toUpperCase() ??
+                                                  '',
+                                            ) ??
+                                            'earth',
+                                  ip: ip ?? '',
+                                  flagUrl: flagUrl ?? "",
+                                  subtitle: showAutoPlaceholder
+                                      ? autoSubtitle
+                                      : null,
+                                  subtitleFlagCountryCode:
+                                      autoResolvedCountryCode,
+                                  subtitleFlagUrl: autoResolvedFlagUrl,
+                                  isSubtitleLoading: isAutoSearching,
+                                  onTap: () {
+                                    homeBloc.add(ServersTappedEvent());
+                                  },
+                                ),
+                                SizedBox(height: spacingAfterServerItem),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 60),
-                      HomeServerItem(
-                        cityName: showAutoPlaceholder ? '' : cityName,
-                        countryCode: countryCode ?? '',
-                        countryName: showAutoPlaceholder
-                            ? (l10n?.serversAutoSelect ?? 'Auto select')
-                            : CountryLocalizations.of(context)?.countryName(
-                                  countryCode: countryCode?.toUpperCase() ?? '',
-                                ) ??
-                                'earth',
-                        ip: ip ?? '',
-                        flagUrl: flagUrl ?? "",
-                        subtitle: showAutoPlaceholder ? autoSubtitle : null,
-                        subtitleFlagCountryCode: autoResolvedCountryCode,
-                        subtitleFlagUrl: autoResolvedFlagUrl,
-                        isSubtitleLoading: isAutoSearching,
-                        onTap: () {
-                          homeBloc.add(ServersTappedEvent());
-                        },
-                      ),
-                      SizedBox(height: spacingAfterServerItem),
-                    ],
+                    ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
             if (showUpdateBanner)
               Positioned(
@@ -862,7 +902,8 @@ class ConnectionStatusBadge extends StatelessWidget {
                 _StatusDot(color: appColors.warning),
                 const SizedBox(width: 7),
                 Text(
-                  l10n?.homeConnectionFailed ?? 'Not Connected — Connection failed',
+                  l10n?.homeConnectionFailed ??
+                      'Not Connected — Connection failed',
                   style: appTextStyles.interMedium14(color: appColors.warning),
                 ),
               ],

@@ -9,6 +9,8 @@ class AuthNavigateToOnboarding extends AuthSideEffect {
   final AgreementsResponse agreementsResponse;
 }
 
+class AuthNavigateToGeonodeKeySetup extends AuthSideEffect {}
+
 class AuthNavigateToSignUp extends AuthSideEffect {}
 
 class AuthNavigateToResetPassword extends AuthSideEffect {}

@@ -78,6 +78,13 @@ class SplashBloc
             .getAgreementsResponse();
 
         if (agreementsResponse.agreement == null) {
+          // The backend only ever records an *accepted* consent (declining
+          // is a client-only, local-per-day throttle — see
+          // _onBandwidthSharingDeclined) — so `agreement == null` here can
+          // only mean this account/device already accepted previously.
+          // Re-sync the local flag in case it was reset (e.g. reinstall,
+          // new device) since it gates the Geonode key prompt below.
+          await _preferences.setZenSdkEnabled(true);
           if (await _preferences.shouldPromptGeonodeKeySetup) {
             produceSideEffect(const NavigateToGeonodeKeySetup());
             return;

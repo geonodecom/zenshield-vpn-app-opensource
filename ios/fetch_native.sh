@@ -25,6 +25,13 @@ set -euo pipefail
 
 REF="${1:-}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+OUT_XCFRAMEWORK="$ROOT_DIR/ios/ZenshieldBox.xcframework"
+
+if [ -d "$OUT_XCFRAMEWORK" ] && [ "${FORCE:-}" != "1" ]; then
+  echo "==> $OUT_XCFRAMEWORK already exists, skipping clone+build (set FORCE=1 to rebuild)."
+  exit 0
+fi
+
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"' EXIT
 

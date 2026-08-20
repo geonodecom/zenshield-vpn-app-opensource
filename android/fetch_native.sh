@@ -22,6 +22,13 @@ set -euo pipefail
 
 REF="${1:-}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+OUT_AAR="$ROOT_DIR/android/app/libs/ZenshieldBox.aar"
+
+if [ -f "$OUT_AAR" ] && [ "${FORCE:-}" != "1" ]; then
+  echo "==> $OUT_AAR already exists, skipping clone+build (set FORCE=1 to rebuild)."
+  exit 0
+fi
+
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"' EXIT
 

@@ -6,6 +6,23 @@ project(zenshield LANGUAGES CXX)
 # the on-disk name of your application.
 set(BINARY_NAME "zenshield")
 
+# Build singbox-tunnel.exe and core/zenshield_core.dll from their public
+# source repos if not already present (see packaging/build_native.sh) — runs
+# once per fresh checkout (first cmake configure), skipped on every later one.
+set(ZENSHIELD_TUNNEL_EXE "${CMAKE_CURRENT_SOURCE_DIR}/../singbox-tunnel.exe")
+set(ZENSHIELD_CORE_DLL "${CMAKE_CURRENT_SOURCE_DIR}/core/zenshield_core.dll")
+if(NOT EXISTS "${ZENSHIELD_TUNNEL_EXE}" OR NOT EXISTS "${ZENSHIELD_CORE_DLL}")
+  message(STATUS "Building native tunnel binaries via build_native.sh (first build only)...")
+  execute_process(
+    COMMAND bash "${CMAKE_CURRENT_SOURCE_DIR}/packaging/build_native.sh"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    RESULT_VARIABLE ZENSHIELD_NATIVE_BUILD_RESULT
+  )
+  if(NOT ZENSHIELD_NATIVE_BUILD_RESULT EQUAL 0)
+    message(FATAL_ERROR "build_native.sh failed (exit code ${ZENSHIELD_NATIVE_BUILD_RESULT}) — see windows/packaging/build_native.sh")
+  endif()
+endif()
+
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
 cmake_policy(VERSION 3.14...3.25)

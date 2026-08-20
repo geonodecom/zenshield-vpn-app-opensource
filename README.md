@@ -28,13 +28,15 @@ cd zenshield-vpn-app
 # 2. Install Flutter dependencies
 flutter pub get
 
-# 3. Build the native tunnel binaries — required, not optional (the app
-#    won't build/connect without these). Each is a one-time step; re-run
-#    only when you want to update the tunnel core.
-android/fetch_native.sh              # for Android
+# 3. Build the native tunnel binaries for iOS/macOS — required, not optional
+#    (Xcode builds fail without them). One-time step; re-run only when you
+#    want to update the tunnel core.
 ios/fetch_native.sh                  # for iOS
-windows/packaging/build_native.sh    # for Windows
 macos/fetch_native.sh                # for macOS
+
+# Android/Windows build these automatically the first time you build/run
+# (Gradle/CMake hook — see §6), no manual step needed. Both skip the
+# clone+build on every later run once the binary already exists.
 
 # 4. Run it
 flutter run -d android   # or: flutter run -d ios / flutter run -d windows / flutter run -d macos
@@ -93,6 +95,32 @@ Add only the ones for features you want.
 
 Delete its line from `secrets.json` (or the whole file) and rebuild — every
 key above degrades gracefully to "feature off," so nothing breaks.
+
+### The Geonode SDK keys specifically: two ways to supply them
+
+The four `GEONODE_*`/`GEONODE_SDK_API_KEY_*` keys (bandwidth-sharing SDK) can
+be supplied in two different ways, depending on who's doing it:
+
+**Way 1 — set it before building (developer).** Either of these two methods
+works, pick whichever's more convenient — both just fill in the same value:
+
+- `--dart-define`/`secrets.json`, as described above, **or**
+- hardcode it directly in `lib/config/constants/common_constants.dart`, where
+  each key is declared like this:
+  ```dart
+  static const String geonodeApiKey = String.fromEnvironment(
+    'GEONODE_API_KEY',        // a flag name — don't put your key here
+    defaultValue: '',         // ← paste your real key here instead
+  );
+  ```
+  Replace the empty `defaultValue: ''` with your real key and rebuild — no
+  `--dart-define` needed.
+
+**Way 2 — enter it at runtime, in the app itself (end user).** If bandwidth
+sharing is turned on but no key was supplied at build time (neither method
+in Way 1), the app shows its own **Geonode SDK Setup** screen after login,
+with two fields to paste the key/app ID into directly — no rebuild required.
+This is what an ordinary end user, not a developer, sees and uses.
 
 ## 4. Optional: Firebase setup (crash reporting)
 
@@ -211,15 +239,20 @@ The sing-box tunnel core and its wrappers are **not committed to this repo**
 
 - **Android** (`android/app/libs/ZenshieldBox.aar`) — the Kotlin code
   imports classes from it directly, so the build *fails* without it, not
-  just at runtime.
+  just at runtime. `android/app/build.gradle` runs `android/fetch_native.sh`
+  automatically before `preBuild` if the `.aar` is missing, so this happens
+  on its own the first time you build/run — no manual step.
 - **iOS** (`ios/ZenshieldBox.xcframework`) — same situation as Android: Swift
   code in `ios/Tunnel/` links against it directly, so Xcode builds *fail*
   without it. `ios/fetch_native.sh` mirrors the upstream Makefile's own
   `ios:` build target exactly (package, tags, target, ldflags), just renamed
-  to match what `ios/Runner.xcodeproj` references.
+  to match what `ios/Runner.xcodeproj` references. Run it manually (§2) —
+  not wired into an Xcode Run Script phase.
 - **Windows** (`singbox-tunnel.exe` at repo root, `windows/core/zenshield_core.dll`)
   — needed for the VPN connection to work at runtime; the app still compiles
-  without them.
+  without them. `windows/CMakeLists.txt` runs
+  `windows/packaging/build_native.sh` automatically on the first `cmake`
+  configure if either file is missing, so this also happens on its own.
 - **macOS** (`macos/zenshieldBox.xcframework`) — same situation as Android:
   Swift code in `macos/Tunnel/` and `macos/SystemTunnel/` links against it
   directly, so Xcode builds *fail* without it. `macos/fetch_native.sh`
@@ -227,10 +260,13 @@ The sing-box tunnel core and its wrappers are **not committed to this repo**
   committed framework's structure (there's no known-good reference command
   for this exact target in the upstream Makefile, unlike iOS above) —
   verified working as of this writing, but re-verify if this command ever
-  changes.
+  changes. Run it manually (§2) — not wired into an Xcode Run Script phase.
 
 All four scripts accept an optional tag/commit to pin an exact version
 (e.g. `android/fetch_native.sh v1.2.0`) — recommended for reproducible builds.
+The Android/Windows auto-hooks (above) always run with no pinned ref; pass
+one by running the script manually once, ahead of time — the hook's
+missing-file check then finds the binary already there and skips.
 
 All four also need `gomobile`/`gobind` installed from the
 `github.com/sagernet/gomobile` fork (`v0.1.8`), not vanilla

@@ -74,6 +74,14 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Placeholder Firebase config (see .gitignore/README) has no real
+            // project to upload the mapping file to — the Crashlytics plugin
+            // otherwise fails the whole release build on a 400 trying to.
+            // Anyone who runs `flutterfire configure` for a real project can
+            // flip this back to true to get de-obfuscated crash stack traces.
+            firebaseCrashlytics {
+                mappingFileUploadEnabled = false
+            }
         }
     }
 
@@ -97,6 +105,22 @@ android {
 
 flutter {
     source = "../.."
+}
+
+// Builds ZenshieldBox.aar from its public source repo if it's not already
+// present (see android/fetch_native.sh) — runs once per fresh checkout,
+// skipped automatically on every later build.
+tasks.register("fetchZenshieldNative", Exec) {
+    description = "Clones the singbox source repos and builds ZenshieldBox.aar if missing"
+    workingDir = rootProject.projectDir
+    commandLine "bash", "fetch_native.sh"
+    onlyIf { !file("libs/ZenshieldBox.aar").exists() }
+}
+
+afterEvaluate {
+    tasks.matching { it.name == "preBuild" }.configureEach {
+        dependsOn("fetchZenshieldNative")
+    }
 }
 
 dependencies {

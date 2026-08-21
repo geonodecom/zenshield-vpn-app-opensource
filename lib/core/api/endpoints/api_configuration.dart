@@ -29,16 +29,10 @@ class ApiEndpoints with _$ApiEndpoints {
     required String setNewPassword,
     required String getUserInfo,
     required String vpnConfigurations,
-    required String getUserInfoRegion,
-    required String pushLogs,
     required String getAppConfig,
     required String facebookAuth,
     required String appleIdToken,
     required String forgotPassword,
-    required String agreements,
-    required String consents,
-    required String appVersion,
-    required String appConfig,
     required String authSuccessRedirect,
   }) = _ApiEndpoints;
 
@@ -57,13 +51,7 @@ class ApiEndpoints with _$ApiEndpoints {
     setNewPassword: '$_host/api/v1/auth/password/reset-password',
     getUserInfo: '$_host/api/v1/user/get-user-info',
     vpnConfigurations: '$_host/api/v1/vpn/vpn-configurations',
-    getUserInfoRegion: '$_host/api/v1/vpn/get-vpn-server-ip-region',
-    pushLogs: '$_host/api/v1/vpn/push-logs',
     getAppConfig: '$_host/api/v1/vpn/get-app-config',
-    agreements: '$_host/api/v1/vpn/agreements',
-    consents: '$_host/api/v1/vpn/consents',
-    appVersion: '$_host/api/v1/vpn/app-version',
-    appConfig: 'https://downloads.zenshield.com/api/v2/zenshield/version',
     authSuccessRedirect: '$_host/api/v1/auth/success',
   );
 
@@ -84,14 +72,8 @@ class ApiEndpoints with _$ApiEndpoints {
       setNewPassword: endpoints['set_new_password'] ?? defaults.setNewPassword,
       getUserInfo: endpoints['get_user_info'] ?? defaults.getUserInfo,
       vpnConfigurations: endpoints['data'] ?? defaults.vpnConfigurations,
-      getUserInfoRegion: endpoints['region'] ?? defaults.getUserInfoRegion,
-      pushLogs: endpoints['push_logs'] ?? defaults.pushLogs,
       getAppConfig: endpoints['get_app_config'] ?? defaults.getAppConfig,
       forgotPassword: endpoints['forgot_password'] ?? defaults.forgotPassword,
-      agreements: endpoints['agreements'] ?? defaults.agreements,
-      consents: endpoints['consents'] ?? defaults.consents,
-      appVersion: endpoints['app_version'] ?? defaults.appVersion,
-      appConfig: endpoints['app_config'] ?? defaults.appConfig,
       authSuccessRedirect:
           endpoints['auth_success_redirect'] ?? defaults.authSuccessRedirect,
     );

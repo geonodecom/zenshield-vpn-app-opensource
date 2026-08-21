@@ -277,16 +277,10 @@ mixin _$ApiEndpoints {
   String get setNewPassword => throw _privateConstructorUsedError;
   String get getUserInfo => throw _privateConstructorUsedError;
   String get vpnConfigurations => throw _privateConstructorUsedError;
-  String get getUserInfoRegion => throw _privateConstructorUsedError;
-  String get pushLogs => throw _privateConstructorUsedError;
   String get getAppConfig => throw _privateConstructorUsedError;
   String get facebookAuth => throw _privateConstructorUsedError;
   String get appleIdToken => throw _privateConstructorUsedError;
   String get forgotPassword => throw _privateConstructorUsedError;
-  String get agreements => throw _privateConstructorUsedError;
-  String get consents => throw _privateConstructorUsedError;
-  String get appVersion => throw _privateConstructorUsedError;
-  String get appConfig => throw _privateConstructorUsedError;
   String get authSuccessRedirect => throw _privateConstructorUsedError;
 
   /// Serializes this ApiEndpoints to a JSON map.
@@ -317,16 +311,10 @@ abstract class $ApiEndpointsCopyWith<$Res> {
     String setNewPassword,
     String getUserInfo,
     String vpnConfigurations,
-    String getUserInfoRegion,
-    String pushLogs,
     String getAppConfig,
     String facebookAuth,
     String appleIdToken,
     String forgotPassword,
-    String agreements,
-    String consents,
-    String appVersion,
-    String appConfig,
     String authSuccessRedirect,
   });
 }
@@ -356,16 +344,10 @@ class _$ApiEndpointsCopyWithImpl<$Res, $Val extends ApiEndpoints>
     Object? setNewPassword = null,
     Object? getUserInfo = null,
     Object? vpnConfigurations = null,
-    Object? getUserInfoRegion = null,
-    Object? pushLogs = null,
     Object? getAppConfig = null,
     Object? facebookAuth = null,
     Object? appleIdToken = null,
     Object? forgotPassword = null,
-    Object? agreements = null,
-    Object? consents = null,
-    Object? appVersion = null,
-    Object? appConfig = null,
     Object? authSuccessRedirect = null,
   }) {
     return _then(
@@ -410,14 +392,6 @@ class _$ApiEndpointsCopyWithImpl<$Res, $Val extends ApiEndpoints>
                 ? _value.vpnConfigurations
                 : vpnConfigurations // ignore: cast_nullable_to_non_nullable
                       as String,
-            getUserInfoRegion: null == getUserInfoRegion
-                ? _value.getUserInfoRegion
-                : getUserInfoRegion // ignore: cast_nullable_to_non_nullable
-                      as String,
-            pushLogs: null == pushLogs
-                ? _value.pushLogs
-                : pushLogs // ignore: cast_nullable_to_non_nullable
-                      as String,
             getAppConfig: null == getAppConfig
                 ? _value.getAppConfig
                 : getAppConfig // ignore: cast_nullable_to_non_nullable
@@ -433,22 +407,6 @@ class _$ApiEndpointsCopyWithImpl<$Res, $Val extends ApiEndpoints>
             forgotPassword: null == forgotPassword
                 ? _value.forgotPassword
                 : forgotPassword // ignore: cast_nullable_to_non_nullable
-                      as String,
-            agreements: null == agreements
-                ? _value.agreements
-                : agreements // ignore: cast_nullable_to_non_nullable
-                      as String,
-            consents: null == consents
-                ? _value.consents
-                : consents // ignore: cast_nullable_to_non_nullable
-                      as String,
-            appVersion: null == appVersion
-                ? _value.appVersion
-                : appVersion // ignore: cast_nullable_to_non_nullable
-                      as String,
-            appConfig: null == appConfig
-                ? _value.appConfig
-                : appConfig // ignore: cast_nullable_to_non_nullable
                       as String,
             authSuccessRedirect: null == authSuccessRedirect
                 ? _value.authSuccessRedirect
@@ -480,16 +438,10 @@ abstract class _$$ApiEndpointsImplCopyWith<$Res>
     String setNewPassword,
     String getUserInfo,
     String vpnConfigurations,
-    String getUserInfoRegion,
-    String pushLogs,
     String getAppConfig,
     String facebookAuth,
     String appleIdToken,
     String forgotPassword,
-    String agreements,
-    String consents,
-    String appVersion,
-    String appConfig,
     String authSuccessRedirect,
   });
 }
@@ -518,16 +470,10 @@ class __$$ApiEndpointsImplCopyWithImpl<$Res>
     Object? setNewPassword = null,
     Object? getUserInfo = null,
     Object? vpnConfigurations = null,
-    Object? getUserInfoRegion = null,
-    Object? pushLogs = null,
     Object? getAppConfig = null,
     Object? facebookAuth = null,
     Object? appleIdToken = null,
     Object? forgotPassword = null,
-    Object? agreements = null,
-    Object? consents = null,
-    Object? appVersion = null,
-    Object? appConfig = null,
     Object? authSuccessRedirect = null,
   }) {
     return _then(
@@ -572,14 +518,6 @@ class __$$ApiEndpointsImplCopyWithImpl<$Res>
             ? _value.vpnConfigurations
             : vpnConfigurations // ignore: cast_nullable_to_non_nullable
                   as String,
-        getUserInfoRegion: null == getUserInfoRegion
-            ? _value.getUserInfoRegion
-            : getUserInfoRegion // ignore: cast_nullable_to_non_nullable
-                  as String,
-        pushLogs: null == pushLogs
-            ? _value.pushLogs
-            : pushLogs // ignore: cast_nullable_to_non_nullable
-                  as String,
         getAppConfig: null == getAppConfig
             ? _value.getAppConfig
             : getAppConfig // ignore: cast_nullable_to_non_nullable
@@ -595,22 +533,6 @@ class __$$ApiEndpointsImplCopyWithImpl<$Res>
         forgotPassword: null == forgotPassword
             ? _value.forgotPassword
             : forgotPassword // ignore: cast_nullable_to_non_nullable
-                  as String,
-        agreements: null == agreements
-            ? _value.agreements
-            : agreements // ignore: cast_nullable_to_non_nullable
-                  as String,
-        consents: null == consents
-            ? _value.consents
-            : consents // ignore: cast_nullable_to_non_nullable
-                  as String,
-        appVersion: null == appVersion
-            ? _value.appVersion
-            : appVersion // ignore: cast_nullable_to_non_nullable
-                  as String,
-        appConfig: null == appConfig
-            ? _value.appConfig
-            : appConfig // ignore: cast_nullable_to_non_nullable
                   as String,
         authSuccessRedirect: null == authSuccessRedirect
             ? _value.authSuccessRedirect
@@ -635,16 +557,10 @@ class _$ApiEndpointsImpl implements _ApiEndpoints {
     required this.setNewPassword,
     required this.getUserInfo,
     required this.vpnConfigurations,
-    required this.getUserInfoRegion,
-    required this.pushLogs,
     required this.getAppConfig,
     required this.facebookAuth,
     required this.appleIdToken,
     required this.forgotPassword,
-    required this.agreements,
-    required this.consents,
-    required this.appVersion,
-    required this.appConfig,
     required this.authSuccessRedirect,
   });
 
@@ -672,10 +588,6 @@ class _$ApiEndpointsImpl implements _ApiEndpoints {
   @override
   final String vpnConfigurations;
   @override
-  final String getUserInfoRegion;
-  @override
-  final String pushLogs;
-  @override
   final String getAppConfig;
   @override
   final String facebookAuth;
@@ -684,19 +596,11 @@ class _$ApiEndpointsImpl implements _ApiEndpoints {
   @override
   final String forgotPassword;
   @override
-  final String agreements;
-  @override
-  final String consents;
-  @override
-  final String appVersion;
-  @override
-  final String appConfig;
-  @override
   final String authSuccessRedirect;
 
   @override
   String toString() {
-    return 'ApiEndpoints(initialize: $initialize, login: $login, registerWithPassword: $registerWithPassword, verifyCode: $verifyCode, googleAuth: $googleAuth, googleAuthToken: $googleAuthToken, googleIdToken: $googleIdToken, setNewPassword: $setNewPassword, getUserInfo: $getUserInfo, vpnConfigurations: $vpnConfigurations, getUserInfoRegion: $getUserInfoRegion, pushLogs: $pushLogs, getAppConfig: $getAppConfig, facebookAuth: $facebookAuth, appleIdToken: $appleIdToken, forgotPassword: $forgotPassword, agreements: $agreements, consents: $consents, appVersion: $appVersion, appConfig: $appConfig, authSuccessRedirect: $authSuccessRedirect)';
+    return 'ApiEndpoints(initialize: $initialize, login: $login, registerWithPassword: $registerWithPassword, verifyCode: $verifyCode, googleAuth: $googleAuth, googleAuthToken: $googleAuthToken, googleIdToken: $googleIdToken, setNewPassword: $setNewPassword, getUserInfo: $getUserInfo, vpnConfigurations: $vpnConfigurations, getAppConfig: $getAppConfig, facebookAuth: $facebookAuth, appleIdToken: $appleIdToken, forgotPassword: $forgotPassword, authSuccessRedirect: $authSuccessRedirect)';
   }
 
   @override
@@ -723,10 +627,6 @@ class _$ApiEndpointsImpl implements _ApiEndpoints {
                 other.getUserInfo == getUserInfo) &&
             (identical(other.vpnConfigurations, vpnConfigurations) ||
                 other.vpnConfigurations == vpnConfigurations) &&
-            (identical(other.getUserInfoRegion, getUserInfoRegion) ||
-                other.getUserInfoRegion == getUserInfoRegion) &&
-            (identical(other.pushLogs, pushLogs) ||
-                other.pushLogs == pushLogs) &&
             (identical(other.getAppConfig, getAppConfig) ||
                 other.getAppConfig == getAppConfig) &&
             (identical(other.facebookAuth, facebookAuth) ||
@@ -735,21 +635,13 @@ class _$ApiEndpointsImpl implements _ApiEndpoints {
                 other.appleIdToken == appleIdToken) &&
             (identical(other.forgotPassword, forgotPassword) ||
                 other.forgotPassword == forgotPassword) &&
-            (identical(other.agreements, agreements) ||
-                other.agreements == agreements) &&
-            (identical(other.consents, consents) ||
-                other.consents == consents) &&
-            (identical(other.appVersion, appVersion) ||
-                other.appVersion == appVersion) &&
-            (identical(other.appConfig, appConfig) ||
-                other.appConfig == appConfig) &&
             (identical(other.authSuccessRedirect, authSuccessRedirect) ||
                 other.authSuccessRedirect == authSuccessRedirect));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hashAll([
+  int get hashCode => Object.hash(
     runtimeType,
     initialize,
     login,
@@ -761,18 +653,12 @@ class _$ApiEndpointsImpl implements _ApiEndpoints {
     setNewPassword,
     getUserInfo,
     vpnConfigurations,
-    getUserInfoRegion,
-    pushLogs,
     getAppConfig,
     facebookAuth,
     appleIdToken,
     forgotPassword,
-    agreements,
-    consents,
-    appVersion,
-    appConfig,
     authSuccessRedirect,
-  ]);
+  );
 
   /// Create a copy of ApiEndpoints
   /// with the given fields replaced by the non-null parameter values.
@@ -800,16 +686,10 @@ abstract class _ApiEndpoints implements ApiEndpoints {
     required final String setNewPassword,
     required final String getUserInfo,
     required final String vpnConfigurations,
-    required final String getUserInfoRegion,
-    required final String pushLogs,
     required final String getAppConfig,
     required final String facebookAuth,
     required final String appleIdToken,
     required final String forgotPassword,
-    required final String agreements,
-    required final String consents,
-    required final String appVersion,
-    required final String appConfig,
     required final String authSuccessRedirect,
   }) = _$ApiEndpointsImpl;
 
@@ -837,10 +717,6 @@ abstract class _ApiEndpoints implements ApiEndpoints {
   @override
   String get vpnConfigurations;
   @override
-  String get getUserInfoRegion;
-  @override
-  String get pushLogs;
-  @override
   String get getAppConfig;
   @override
   String get facebookAuth;
@@ -848,14 +724,6 @@ abstract class _ApiEndpoints implements ApiEndpoints {
   String get appleIdToken;
   @override
   String get forgotPassword;
-  @override
-  String get agreements;
-  @override
-  String get consents;
-  @override
-  String get appVersion;
-  @override
-  String get appConfig;
   @override
   String get authSuccessRedirect;
 

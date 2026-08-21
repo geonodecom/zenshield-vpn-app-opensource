@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:side_effect_bloc/side_effect_bloc.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
 import 'package:zenshield/di/injection_container.dart';
-import 'package:zenshield/feature/agreements/domain/useCase/agreement_use_case.dart';
 import 'package:zenshield/feature/auth/data/auth_user_use_case.dart';
 import 'package:zenshield/gen/assets.gen.dart';
 import 'package:zenshield/l10n/app_localizations.dart';
@@ -15,7 +13,6 @@ import 'package:zenshield/feature/check_inbox/presentation/check_inbox_side_effe
 import 'package:zenshield/feature/auth/presentation/auth_view.dart';
 import 'package:zenshield/feature/home/presentation/home_view.dart';
 import 'package:zenshield/feature/new_password/presentation/new_password_view.dart';
-import 'package:zenshield/feature/onboarding_progress/presentation/onboarding_progress_view.dart';
 import 'package:zenshield/core/widgets/error_dialog.dart';
 import 'package:zenshield/config/theme/app_colors/app_colors.dart';
 import 'package:zenshield/config/theme/app_text_styles/app_text_styles.dart';
@@ -39,10 +36,8 @@ class CheckInboxView extends StatelessWidget {
         eventBus: getIt<EventBus>(),
         authUseCase: getIt<AbstractAuthUserUseCase>(),
         logger: getIt<Talker>(),
-        analyticsManager: getIt<AbstractAnalyticsManager>(),
         email: email,
         verificationType: verificationType,
-        agreementUseCase: getIt<AbstractAgreementUseCase>(),
       ),
       child: BlocSideEffectListener<CheckInboxBloc, CheckInboxSideEffect>(
         listener: (context, sideEffect) async {
@@ -53,15 +48,6 @@ class CheckInboxView extends StatelessWidget {
                 await Navigator.of(
                   context,
                 ).pushReplacementNamed(HomeView.routeName);
-              }
-            case NavigateToOnboarding():
-              if (context.mounted) {
-                await Navigator.of(
-                  context,
-                ).pushReplacementNamed(
-                  OnboardingProgressView.routeName,
-                  arguments: sideEffect.agreementsResponse,
-                );
               }
             case NavigateToNewPassword():
               if (context.mounted) {

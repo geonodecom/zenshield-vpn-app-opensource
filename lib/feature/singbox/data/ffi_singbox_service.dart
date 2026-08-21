@@ -10,8 +10,7 @@ import 'package:zenshield/feature/singbox/data/models/singbox_vpn_state/singbox_
 import 'package:zenshield/feature/singbox/data/singbox_service.dart';
 import 'package:zenshield/gen/zenshield_generated_bindings.dart';
 import 'package:path_provider/path_provider.dart';
-// ignore: implementation_imports
-import 'package:dart_peer_repo/src/classes/singbox_monitor.dart';
+import 'package:zenshield/core/utils/singbox_monitor.dart';
 
 class FFISingboxService extends SingboxService {
   FFISingboxService({

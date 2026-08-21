@@ -18,7 +18,6 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$AboutState {
   String get appVersion => throw _privateConstructorUsedError;
-  bool get isLoadingAgreement => throw _privateConstructorUsedError;
   int get versionTapCount => throw _privateConstructorUsedError;
 
   /// Create a copy of AboutState
@@ -35,7 +34,7 @@ abstract class $AboutStateCopyWith<$Res> {
     $Res Function(AboutState) then,
   ) = _$AboutStateCopyWithImpl<$Res, AboutState>;
   @useResult
-  $Res call({String appVersion, bool isLoadingAgreement, int versionTapCount});
+  $Res call({String appVersion, int versionTapCount});
 }
 
 /// @nodoc
@@ -52,21 +51,13 @@ class _$AboutStateCopyWithImpl<$Res, $Val extends AboutState>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? appVersion = null,
-    Object? isLoadingAgreement = null,
-    Object? versionTapCount = null,
-  }) {
+  $Res call({Object? appVersion = null, Object? versionTapCount = null}) {
     return _then(
       _value.copyWith(
             appVersion: null == appVersion
                 ? _value.appVersion
                 : appVersion // ignore: cast_nullable_to_non_nullable
                       as String,
-            isLoadingAgreement: null == isLoadingAgreement
-                ? _value.isLoadingAgreement
-                : isLoadingAgreement // ignore: cast_nullable_to_non_nullable
-                      as bool,
             versionTapCount: null == versionTapCount
                 ? _value.versionTapCount
                 : versionTapCount // ignore: cast_nullable_to_non_nullable
@@ -86,7 +77,7 @@ abstract class _$$AboutStateImplCopyWith<$Res>
   ) = __$$AboutStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String appVersion, bool isLoadingAgreement, int versionTapCount});
+  $Res call({String appVersion, int versionTapCount});
 }
 
 /// @nodoc
@@ -102,21 +93,13 @@ class __$$AboutStateImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? appVersion = null,
-    Object? isLoadingAgreement = null,
-    Object? versionTapCount = null,
-  }) {
+  $Res call({Object? appVersion = null, Object? versionTapCount = null}) {
     return _then(
       _$AboutStateImpl(
         appVersion: null == appVersion
             ? _value.appVersion
             : appVersion // ignore: cast_nullable_to_non_nullable
                   as String,
-        isLoadingAgreement: null == isLoadingAgreement
-            ? _value.isLoadingAgreement
-            : isLoadingAgreement // ignore: cast_nullable_to_non_nullable
-                  as bool,
         versionTapCount: null == versionTapCount
             ? _value.versionTapCount
             : versionTapCount // ignore: cast_nullable_to_non_nullable
@@ -129,24 +112,17 @@ class __$$AboutStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$AboutStateImpl implements _AboutState {
-  const _$AboutStateImpl({
-    required this.appVersion,
-    this.isLoadingAgreement = false,
-    this.versionTapCount = 0,
-  });
+  const _$AboutStateImpl({required this.appVersion, this.versionTapCount = 0});
 
   @override
   final String appVersion;
-  @override
-  @JsonKey()
-  final bool isLoadingAgreement;
   @override
   @JsonKey()
   final int versionTapCount;
 
   @override
   String toString() {
-    return 'AboutState(appVersion: $appVersion, isLoadingAgreement: $isLoadingAgreement, versionTapCount: $versionTapCount)';
+    return 'AboutState(appVersion: $appVersion, versionTapCount: $versionTapCount)';
   }
 
   @override
@@ -156,15 +132,12 @@ class _$AboutStateImpl implements _AboutState {
             other is _$AboutStateImpl &&
             (identical(other.appVersion, appVersion) ||
                 other.appVersion == appVersion) &&
-            (identical(other.isLoadingAgreement, isLoadingAgreement) ||
-                other.isLoadingAgreement == isLoadingAgreement) &&
             (identical(other.versionTapCount, versionTapCount) ||
                 other.versionTapCount == versionTapCount));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, appVersion, isLoadingAgreement, versionTapCount);
+  int get hashCode => Object.hash(runtimeType, appVersion, versionTapCount);
 
   /// Create a copy of AboutState
   /// with the given fields replaced by the non-null parameter values.
@@ -178,14 +151,11 @@ class _$AboutStateImpl implements _AboutState {
 abstract class _AboutState implements AboutState {
   const factory _AboutState({
     required final String appVersion,
-    final bool isLoadingAgreement,
     final int versionTapCount,
   }) = _$AboutStateImpl;
 
   @override
   String get appVersion;
-  @override
-  bool get isLoadingAgreement;
   @override
   int get versionTapCount;
 

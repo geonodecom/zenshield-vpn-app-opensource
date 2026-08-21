@@ -18,9 +18,6 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$HomeState {
   String get timerValue => throw _privateConstructorUsedError;
-  bool get showUpdateBanner => throw _privateConstructorUsedError;
-  String? get updateVersion => throw _privateConstructorUsedError;
-  bool get isUpdatePopupShowing => throw _privateConstructorUsedError;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -34,12 +31,7 @@ abstract class $HomeStateCopyWith<$Res> {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) then) =
       _$HomeStateCopyWithImpl<$Res, HomeState>;
   @useResult
-  $Res call({
-    String timerValue,
-    bool showUpdateBanner,
-    String? updateVersion,
-    bool isUpdatePopupShowing,
-  });
+  $Res call({String timerValue});
 }
 
 /// @nodoc
@@ -56,30 +48,13 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? timerValue = null,
-    Object? showUpdateBanner = null,
-    Object? updateVersion = freezed,
-    Object? isUpdatePopupShowing = null,
-  }) {
+  $Res call({Object? timerValue = null}) {
     return _then(
       _value.copyWith(
             timerValue: null == timerValue
                 ? _value.timerValue
                 : timerValue // ignore: cast_nullable_to_non_nullable
                       as String,
-            showUpdateBanner: null == showUpdateBanner
-                ? _value.showUpdateBanner
-                : showUpdateBanner // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            updateVersion: freezed == updateVersion
-                ? _value.updateVersion
-                : updateVersion // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            isUpdatePopupShowing: null == isUpdatePopupShowing
-                ? _value.isUpdatePopupShowing
-                : isUpdatePopupShowing // ignore: cast_nullable_to_non_nullable
-                      as bool,
           )
           as $Val,
     );
@@ -95,12 +70,7 @@ abstract class _$$HomeStateImplCopyWith<$Res>
   ) = __$$HomeStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String timerValue,
-    bool showUpdateBanner,
-    String? updateVersion,
-    bool isUpdatePopupShowing,
-  });
+  $Res call({String timerValue});
 }
 
 /// @nodoc
@@ -116,30 +86,13 @@ class __$$HomeStateImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? timerValue = null,
-    Object? showUpdateBanner = null,
-    Object? updateVersion = freezed,
-    Object? isUpdatePopupShowing = null,
-  }) {
+  $Res call({Object? timerValue = null}) {
     return _then(
       _$HomeStateImpl(
         timerValue: null == timerValue
             ? _value.timerValue
             : timerValue // ignore: cast_nullable_to_non_nullable
                   as String,
-        showUpdateBanner: null == showUpdateBanner
-            ? _value.showUpdateBanner
-            : showUpdateBanner // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        updateVersion: freezed == updateVersion
-            ? _value.updateVersion
-            : updateVersion // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        isUpdatePopupShowing: null == isUpdatePopupShowing
-            ? _value.isUpdatePopupShowing
-            : isUpdatePopupShowing // ignore: cast_nullable_to_non_nullable
-                  as bool,
       ),
     );
   }
@@ -148,27 +101,14 @@ class __$$HomeStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$HomeStateImpl implements _HomeState {
-  const _$HomeStateImpl({
-    required this.timerValue,
-    this.showUpdateBanner = false,
-    this.updateVersion,
-    this.isUpdatePopupShowing = false,
-  });
+  const _$HomeStateImpl({required this.timerValue});
 
   @override
   final String timerValue;
-  @override
-  @JsonKey()
-  final bool showUpdateBanner;
-  @override
-  final String? updateVersion;
-  @override
-  @JsonKey()
-  final bool isUpdatePopupShowing;
 
   @override
   String toString() {
-    return 'HomeState(timerValue: $timerValue, showUpdateBanner: $showUpdateBanner, updateVersion: $updateVersion, isUpdatePopupShowing: $isUpdatePopupShowing)';
+    return 'HomeState(timerValue: $timerValue)';
   }
 
   @override
@@ -177,23 +117,11 @@ class _$HomeStateImpl implements _HomeState {
         (other.runtimeType == runtimeType &&
             other is _$HomeStateImpl &&
             (identical(other.timerValue, timerValue) ||
-                other.timerValue == timerValue) &&
-            (identical(other.showUpdateBanner, showUpdateBanner) ||
-                other.showUpdateBanner == showUpdateBanner) &&
-            (identical(other.updateVersion, updateVersion) ||
-                other.updateVersion == updateVersion) &&
-            (identical(other.isUpdatePopupShowing, isUpdatePopupShowing) ||
-                other.isUpdatePopupShowing == isUpdatePopupShowing));
+                other.timerValue == timerValue));
   }
 
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    timerValue,
-    showUpdateBanner,
-    updateVersion,
-    isUpdatePopupShowing,
-  );
+  int get hashCode => Object.hash(runtimeType, timerValue);
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -205,21 +133,11 @@ class _$HomeStateImpl implements _HomeState {
 }
 
 abstract class _HomeState implements HomeState {
-  const factory _HomeState({
-    required final String timerValue,
-    final bool showUpdateBanner,
-    final String? updateVersion,
-    final bool isUpdatePopupShowing,
-  }) = _$HomeStateImpl;
+  const factory _HomeState({required final String timerValue}) =
+      _$HomeStateImpl;
 
   @override
   String get timerValue;
-  @override
-  bool get showUpdateBanner;
-  @override
-  String? get updateVersion;
-  @override
-  bool get isUpdatePopupShowing;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.

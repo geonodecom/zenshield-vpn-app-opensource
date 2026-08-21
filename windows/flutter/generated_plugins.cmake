@@ -10,7 +10,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_inappwebview_windows
   flutter_platform_alert
   flutter_secure_storage_windows
-  geonode_sdk
   permission_handler_windows
   screen_retriever_windows
   share_plus

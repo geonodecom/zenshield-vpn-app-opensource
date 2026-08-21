@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class CommonConstants {
   CommonConstants._();
 
@@ -33,50 +31,4 @@ class CommonConstants {
 
   // App Store ID for the "Rate this app" deep link. Public, not a secret.
   static const String appStoreId = '6761452504';
-
-  // Bandwidth-sharing SDK (package:geonode_sdk, proprietary, from pub.dev).
-  // Optional — leave every value below empty and the feature is skipped
-  // entirely (code checks .isEmpty before ever touching the SDK); the app
-  // then prompts for a key in its own in-app setup screen at runtime instead.
-  //
-  // TWO WAYS to supply your own key — do NOT edit the first argument (the
-  // quoted UPPER_CASE name) in any of the String.fromEnvironment(...) calls
-  // below, that's a lookup name, not a value slot, and silently stays empty
-  // if you put your key there instead:
-  //   1. Build-time: pass --dart-define=GEONODE_API_KEY=your-key (etc.),
-  //      e.g. via a gitignored secrets.json — see README.
-  //   2. Hardcode directly here instead: replace the empty defaultValue: ''
-  //      below with your real key, e.g. defaultValue: 'your-key-here'.
-  static const String geonodeSdkApiKeyWindows = String.fromEnvironment(
-    'GEONODE_SDK_API_KEY_WINDOWS', 
-    defaultValue: '', // ← paste your key here to hardcode it, or leave empty
-  );
-  static const String geonodeAppIdAndroid = String.fromEnvironment(
-    'GEONODE_APP_ID_ANDROID',
-    defaultValue: '', // ← paste your key here to hardcode it, or leave empty
-  );
-  static const String geonodeSdkApiKeyMacOS = String.fromEnvironment(
-    'GEONODE_SDK_API_KEY_MACOS', 
-    defaultValue: '', // ← paste your key here to hardcode it, or leave empty
-  );
-  static const String geonodeAppIdIOS = String.fromEnvironment(
-    'GEONODE_APP_ID_IOS',
-    defaultValue: '', // ← paste your key here to hardcode it, or leave empty
-  );
-
-  static const String geonodeApiKey = String.fromEnvironment(
-    'GEONODE_API_KEY', 
-    defaultValue: '', // ← paste your key here to hardcode it, or leave empty
-  );
-
-  /// The build-time app ID/key for whichever platform is currently running —
-  /// see the four `geonode*` constants above. Empty on an unsupported
-  /// platform or when the build didn't set the corresponding define.
-  static String get geonodeAppIdForCurrentPlatform {
-    if (Platform.isAndroid) return geonodeAppIdAndroid;
-    if (Platform.isWindows) return geonodeSdkApiKeyWindows;
-    if (Platform.isMacOS) return geonodeSdkApiKeyMacOS;
-    if (Platform.isIOS) return geonodeAppIdIOS;
-    return '';
-  }
 }

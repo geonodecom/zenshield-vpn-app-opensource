@@ -8,12 +8,12 @@ Install these before anything else:
 
 | Tool | Needed for |
 |---|---|
-| [Flutter SDK 3.35.6](https://docs.flutter.dev/release/archive) (stable) | Everything — newer versions may cause build errors |
+| [Flutter SDK 3.44.0](https://docs.flutter.dev/release/archive) (stable) | Everything — newer versions may cause build errors |
 | Go 1.24+ | Building native binaries (all platforms) |
 | `gomobile`/`gobind` from `github.com/sagernet/gomobile@v0.1.8` (not vanilla `golang.org/x/mobile`) | Building the Android/iOS/macOS native binaries — see §6 for why the fork matters |
 | Android SDK + NDK | Building the Android native binary |
-| mingw-w64 (`x86_64-w64-mingw32-gcc`) | Building the Windows native binary from Linux/macOS |
-| Visual Studio (Desktop C++ workload) | Building/running the Windows app itself |
+| mingw-w64 (`x86_64-w64-mingw32-gcc`) | Building the Windows native binary — needed even when building **on** Windows itself: Visual Studio's C++ workload (below) provides `cl.exe`, which is not a CGO-compatible compiler, so `zenshield_core.dll`'s cgo build still needs a GCC/clang-style `WINDOWS_CC` (e.g. install via `winget install BrechtSanders.WinLibs.POSIX.UCRT`) |
+| Visual Studio (Desktop C++ workload) | Building/running the Windows app itself (the Flutter/CMake side, separate from the Go/cgo native binaries above) |
 | Xcode | Building the iOS/macOS native binaries — macOS host only, can't cross-compile |
 
 Run `flutter doctor` after installing to confirm your setup.
@@ -47,6 +47,15 @@ further setup. Firebase ships with safe placeholder config (see §4), and
 every key in §3 is optional — omitting all of them just turns off a few
 secondary features (see the table), nothing crashes.
 
+**Windows only — run `flutter run -d windows` from an elevated (Administrator)
+terminal.** The native tunnel setup (`zenshieldCore.setup()`, called on every
+app start) creates a Windows network adapter, which needs admin rights.
+Without elevation, that call blocks forever with no error, timeout, or dialog
+— the app just sits there: process alive, 0% CPU, window created but never
+shown. If `flutter run` looks stuck right after `[VPN] Initializing VPN
+service` in the log with no window appearing, this is why — kill it and
+rerun from an admin terminal.
+
 ## 3. Optional: add your own keys
 
 None of these are required to build or run the app, or to connect the VPN.
@@ -54,13 +63,8 @@ Add only the ones for features you want.
 
 | Key | Enables | Without it |
 |---|---|---|
-| `GEONODE_API_KEY` | Bandwidth-sharing SDK (proprietary, fetched from pub.dev) | Feature off |
-| `GEONODE_APP_ID_ANDROID` | ^ same feature, Android | Feature off |
-| `GEONODE_SDK_API_KEY_WINDOWS` | ^ same feature, Windows | Feature off |
-| `GEONODE_SDK_API_KEY_MACOS` | ^ same feature, macOS | Feature off |
 | `AMBILYTICS_MEASUREMENT_ID` | Which GA4 property Windows analytics reports to (defaults to the original project's — see §5) | Uses the default |
 | `AMBILYTICS_API_SECRET` | Windows analytics ping (see §5 to get your own) | Skipped |
-| `GEONODE_TCP_AUTH_SECRET` | Auth password for a debug curl command the SDK logs (proxy diagnostics) | Debug log just shows an empty password field — harmless |
 
 ### How to add them — step by step
 
@@ -70,12 +74,7 @@ Add only the ones for features you want.
    so it's never committed):
    ```json
    {
-     "GEONODE_API_KEY": "...",
-     "GEONODE_APP_ID_ANDROID": "...",
-     "GEONODE_SDK_API_KEY_WINDOWS": "...",
-     "GEONODE_SDK_API_KEY_MACOS": "...",
-     "AMBILYTICS_API_SECRET": "...",
-     "GEONODE_TCP_AUTH_SECRET": "..."
+     "AMBILYTICS_API_SECRET": "..."
    }
    ```
    Only include the keys you actually have — you don't need all of them.
@@ -95,32 +94,6 @@ Add only the ones for features you want.
 
 Delete its line from `secrets.json` (or the whole file) and rebuild — every
 key above degrades gracefully to "feature off," so nothing breaks.
-
-### The Geonode SDK keys specifically: two ways to supply them
-
-The four `GEONODE_*`/`GEONODE_SDK_API_KEY_*` keys (bandwidth-sharing SDK) can
-be supplied in two different ways, depending on who's doing it:
-
-**Way 1 — set it before building (developer).** Either of these two methods
-works, pick whichever's more convenient — both just fill in the same value:
-
-- `--dart-define`/`secrets.json`, as described above, **or**
-- hardcode it directly in `lib/config/constants/common_constants.dart`, where
-  each key is declared like this:
-  ```dart
-  static const String geonodeApiKey = String.fromEnvironment(
-    'GEONODE_API_KEY',        // a flag name — don't put your key here
-    defaultValue: '',         // ← paste your real key here instead
-  );
-  ```
-  Replace the empty `defaultValue: ''` with your real key and rebuild — no
-  `--dart-define` needed.
-
-**Way 2 — enter it at runtime, in the app itself (end user).** If bandwidth
-sharing is turned on but no key was supplied at build time (neither method
-in Way 1), the app shows its own **Geonode SDK Setup** screen after login,
-with two fields to paste the key/app ID into directly — no rebuild required.
-This is what an ordinary end user, not a developer, sees and uses.
 
 ## 4. Optional: Firebase setup (crash reporting)
 
@@ -283,6 +256,16 @@ Three source repos must be public for these scripts to work:
 referenced via a local-path `replace` in its `go.mod` — the scripts already
 clone both as siblings, as required).
 
+`zenshield-windows-service`'s own `go.mod` has the same kind of problem: its
+`replace` directives for `github.com/sagernet/sing-box` and
+`github.com/npvpn/singboxUtils` point at `github.com/highlight-apps/...` —
+private, pre-open-source repos that 404 for anyone outside that org.
+`build_native.sh` works around this the same way it already does for the DLL
+build above: it clones `zenshield-singbox-geonode-sdk-patch` and
+`zenshield-singbox-utils` as siblings and repoints both `replace` directives
+at them with `go mod edit` before building, so no manual go.mod editing is
+needed.
+
 ## 7. Windows installer (EXE) packaging
 
 Only needed for building a distributable, signed installer — not for
@@ -291,7 +274,6 @@ Only needed for building a distributable, signed installer — not for
 ```bash
 dart pub global activate fastforge
 
-cd geonode_sdk && flutter pub get && cd ..
 cd packages/desktop_updater && flutter pub get && cd ../..
 
 fastforge package --flutter-build-args=verbose --platform windows --targets exe

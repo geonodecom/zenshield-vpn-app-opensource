@@ -1,11 +1,8 @@
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
 import 'package:zenshield/di/injection_container.dart';
 import 'package:zenshield/feature/auth/data/auth_user_use_case.dart';
-import 'package:zenshield/feature/auth/data/login_error_message_use_case.dart';
-import 'package:zenshield/feature/agreements/domain/useCase/agreement_use_case.dart';
 import 'package:zenshield/l10n/app_localizations.dart';
 import 'package:zenshield/feature/auth/presentation/auth_bloc.dart';
 import 'package:zenshield/feature/auth/presentation/auth_side_effect.dart';
@@ -17,10 +14,7 @@ import 'package:zenshield/feature/auth/presentation/widgets/auth_primary_button.
 import 'package:zenshield/feature/auth/presentation/widgets/auth_social_login_row.dart';
 import 'package:zenshield/feature/check_inbox/presentation/check_inbox_args.dart';
 import 'package:zenshield/feature/check_inbox/presentation/check_inbox_view.dart';
-import 'package:zenshield/feature/geonode_key_setup/presentation/geonode_key_setup_view.dart';
 import 'package:zenshield/feature/home/presentation/home_view.dart';
-import 'package:zenshield/feature/onboarding_progress/presentation/onboarding_progress_view.dart';
-import 'package:zenshield/core/utils/mixins.dart';
 import 'package:zenshield/feature/reset_password/presentation/reset_password_view.dart';
 import 'package:zenshield/feature/new_password/presentation/new_password_view.dart';
 import 'package:zenshield/core/widgets/error_dialog.dart';
@@ -40,9 +34,6 @@ class AuthView extends StatelessWidget {
       create: (_) => AuthBloc(
         logger: getIt<Talker>(),
         authUseCase: getIt<AbstractAuthUserUseCase>(),
-        analyticsManager: getIt<AbstractAnalyticsManager>(),
-        agreementUseCase: getIt<AbstractAgreementUseCase>(),
-        loginErrorMessageUseCase: getIt<AbstractLoginErrorMessageUseCase>(),
         eventBus: getIt<EventBus>(),
       ),
       child: BlocSideEffectListener<AuthBloc, AuthSideEffect>(
@@ -54,19 +45,6 @@ class AuthView extends StatelessWidget {
               await Navigator.of(
                 context,
               ).pushReplacementNamed(HomeView.routeName);
-            }
-          } else if (sideEffect is AuthNavigateToOnboarding) {
-            if (context.mounted) {
-              await Navigator.of(context).pushReplacementNamed(
-                OnboardingProgressView.routeName,
-                arguments: sideEffect.agreementsResponse,
-              );
-            }
-          } else if (sideEffect is AuthNavigateToGeonodeKeySetup) {
-            if (context.mounted) {
-              await Navigator.of(
-                context,
-              ).pushReplacementNamed(GeonodeKeySetupView.routeName);
             }
           } else if (sideEffect is AuthNavigateToSignUp) {
             final authBloc = context.read<AuthBloc>();
@@ -254,12 +232,7 @@ class _LoginContent extends StatefulWidget {
   State<_LoginContent> createState() => _LoginContentState();
 }
 
-class _LoginContentState extends State<_LoginContent>
-    with AnalyticsEventSender {
-  @override
-  AbstractAnalyticsManager get analyticsManager =>
-      getIt<AbstractAnalyticsManager>();
-
+class _LoginContentState extends State<_LoginContent> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   final FocusNode _emailFocusNode = FocusNode();

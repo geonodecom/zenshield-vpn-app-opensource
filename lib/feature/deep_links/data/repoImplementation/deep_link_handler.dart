@@ -23,20 +23,6 @@ class DeepLinkHandler {
     logger.info('Handling deep link: $uri');
     final queryParams = uri.queryParameters;
 
-    // AppsFlyer / OneLink deep links arrive through the same app scheme but do not
-    // participate in the email verification deep link flow (no `action` param).
-    // Avoid showing "Unknown action" popups for attribution links.
-    final isAppsFlyerLink =
-        queryParams.containsKey('af_dp') ||
-        queryParams.containsKey('af_deeplink') ||
-        queryParams.containsKey('media_source') ||
-        queryParams.containsKey('campaign') ||
-        queryParams.containsKey('cf_click_id');
-    if (isAppsFlyerLink && (queryParams['action'] == null || queryParams['action']!.isEmpty)) {
-      logger.info('AppsFlyer link detected — ignoring for auth deep link handler');
-      return;
-    }
-
     if (queryParams['source'] == 'oauth') {
       logger.info('OAuth web flow callback — no action required');
       return;

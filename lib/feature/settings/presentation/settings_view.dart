@@ -4,8 +4,6 @@ import 'package:zenshield/core/utils/platform_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
-import 'package:zenshield/core/managers/geonode_sdk_manager.dart';
 import 'package:zenshield/di/injection_container.dart';
 import 'package:zenshield/feature/auth/data/auth_user_use_case.dart';
 import 'package:zenshield/feature/launch/domain/repositories/launch_on_startup_manager.dart';
@@ -21,7 +19,6 @@ import 'package:zenshield/feature/protocols/presentation/protocols_view.dart';
 import 'package:zenshield/feature/settings/presentation/setting_side_effect.dart';
 import 'package:zenshield/feature/settings/presentation/settings_bloc.dart';
 import 'package:zenshield/feature/auth/presentation/auth_view.dart';
-import 'package:zenshield/core/utils/mixins.dart';
 import 'package:side_effect_bloc/side_effect_bloc.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:zenshield/config/theme/app_colors/app_colors.dart';
@@ -39,13 +36,11 @@ class SettingsView extends StatelessWidget {
       create: (context) => SettingsBloc(
         secureStorage: getIt<FlutterSecureStorage>(),
         logger: getIt<Talker>(),
-        analyticsManager: getIt<AbstractAnalyticsManager>(),
         launchOnStartupManager: getIt<AbstractLaunchOnStartupManager>(),
         userInfoUseCase: getIt<AbstractUserInfoUseCase>(),
         vpnManager: getIt<AbstractVpnManager>(),
         authUseCase: getIt<AbstractAuthUserUseCase>(),
         platformSettingsService: getIt<AbstractPlatformSettingsService>(),
-        geonodeSdkManager: getIt<AbstractGeonodeSdkManager>(),
       ),
       child: BlocSideEffectListener<SettingsBloc, SettingsSideEffect>(
         listener: (context, sideEffect) async {
@@ -78,11 +73,7 @@ class _SettingsContent extends StatefulWidget {
 }
 
 class _SettingsContentState extends State<_SettingsContent>
-    with WidgetsBindingObserver, AnalyticsEventSender {
-  @override
-  AbstractAnalyticsManager get analyticsManager =>
-      getIt<AbstractAnalyticsManager>();
-
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();

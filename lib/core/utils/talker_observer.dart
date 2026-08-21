@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:talker_bloc_logger/talker_bloc_logger.dart';
 import 'package:talker_flutter/talker_flutter.dart';
-import 'package:zenshield/feature/app_update/presentation/app_update_bloc.dart';
 import 'package:zenshield/feature/home/presentation/home_bloc.dart';
 
 class CustomTalkerBlocObserver extends TalkerBlocObserver {
@@ -29,14 +28,6 @@ class CustomTalkerBlocObserver extends TalkerBlocObserver {
     if (bloc is Bloc) {
       super.onEvent(bloc, event);
     }
-
-    if (bloc is AppUpdateBloc) {
-      _customTalker.info('=== AppUpdateBloc Event ===');
-      _customTalker.info('Event: ${event.runtimeType}');
-      _customTalker.info('Event data: $event');
-      _customTalker.info('Current state: ${bloc.state}');
-      _logAppUpdateBlocContext(bloc);
-    }
   }
 
   @override
@@ -48,13 +39,6 @@ class CustomTalkerBlocObserver extends TalkerBlocObserver {
 
     _lastStates[bloc] = change.nextState;
     super.onChange(bloc, change);
-
-    if (bloc is AppUpdateBloc) {
-      _customTalker.info('=== AppUpdateBloc State Change ===');
-      _customTalker.info('Previous state: ${change.currentState}');
-      _customTalker.info('Next state: ${change.nextState}');
-      _logAppUpdateBlocContext(bloc);
-    }
   }
 
   @override
@@ -65,13 +49,6 @@ class CustomTalkerBlocObserver extends TalkerBlocObserver {
 
     if (bloc is Bloc) {
       super.onTransition(bloc, transition);
-    }
-
-    if (bloc is AppUpdateBloc) {
-      _customTalker.info('=== AppUpdateBloc Transition ===');
-      _customTalker.info('Event: ${transition.event}');
-      _customTalker.info('Current state: ${transition.currentState}');
-      _customTalker.info('Next state: ${transition.nextState}');
     }
   }
 
@@ -84,47 +61,6 @@ class CustomTalkerBlocObserver extends TalkerBlocObserver {
     _customTalker.error('Error type: ${error.runtimeType}');
     _customTalker.error('Error: $error');
 
-    if (bloc is AppUpdateBloc) {
-      _logAppUpdateBlocDiagnostics(bloc, error, stackTrace);
-    }
-
     super.onError(bloc, error, stackTrace);
-  }
-
-  void _logAppUpdateBlocContext(AppUpdateBloc bloc) {
-    try {
-      final diagnostics = bloc.getDiagnostics();
-      _customTalker.info('Desktop updater context:');
-      diagnostics.forEach((key, value) {
-        _customTalker.info('  - $key: $value');
-      });
-      _customTalker.info('Bloc isClosed: ${bloc.isClosed}');
-    } catch (e) {
-      _customTalker.warning('Failed to log AppUpdateBloc context: $e');
-    }
-  }
-
-  void _logAppUpdateBlocDiagnostics(
-    AppUpdateBloc bloc,
-    Object error,
-    StackTrace stackTrace,
-  ) {
-    _customTalker.error('=== AppUpdateBloc Detailed Diagnostics ===');
-
-    try {
-      final diagnostics = bloc.getDiagnostics();
-      _customTalker.error('Diagnostics:');
-      diagnostics.forEach((key, value) {
-        _customTalker.error('  - $key: $value');
-      });
-    } catch (e) {
-      _customTalker.error('Failed to get diagnostics: $e');
-    }
-
-    _customTalker.error('Last event: ${_lastEvents[bloc]}');
-    _customTalker.error('Last state before error: ${_lastStates[bloc]}');
-    _customTalker.error('Error type: ${error.runtimeType}');
-    _customTalker.error('Error message: ${error.toString()}');
-    _customTalker.error('Stack trace: $stackTrace');
   }
 }

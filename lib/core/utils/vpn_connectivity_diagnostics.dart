@@ -6,8 +6,7 @@ import 'package:talker_flutter/talker_flutter.dart';
 import 'package:zenshield/core/preferences.dart';
 import 'package:zenshield/feature/singbox/data/singbox_service.dart';
 import 'package:zenshield/feature/vpn_config/domain/repositories/vpn_config_repository.dart';
-// ignore: implementation_imports
-import 'package:dart_peer_repo/src/classes/singbox_monitor.dart';
+import 'package:zenshield/core/utils/singbox_monitor.dart';
 
 /// Runs connectivity checks after VPN reports Connected and prints a single
 /// filterable report. Search logs for `[VPN-DIAG]`.
@@ -70,9 +69,8 @@ class VpnConnectivityDiagnostics {
     try {
       final serverId = await _preferences.currentServerId;
       final protocol = await _preferences.currentProtocol;
-      final zenSdk = await _preferences.zenSdkEnabled;
       _line(
-        'selected_server=$serverId protocol=${protocol?.name ?? 'unknown'} zen_sdk_enabled=$zenSdk',
+        'selected_server=$serverId protocol=${protocol?.name ?? 'unknown'}',
       );
     } catch (e) {
       _line('WARN could not read preferences: $e');

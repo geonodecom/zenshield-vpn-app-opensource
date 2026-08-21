@@ -20,10 +20,8 @@ mixin _$AppState {
   ConnectionStatus get connectionStatus => throw _privateConstructorUsedError;
   Protocols get protocol => throw _privateConstructorUsedError;
   VpnConfiguration? get selectedServer => throw _privateConstructorUsedError;
-  bool get zenSdkEnabled => throw _privateConstructorUsedError;
   bool get launchOnStartup => throw _privateConstructorUsedError;
   bool get launchOnStartupFailed => throw _privateConstructorUsedError;
-  bool? get needsUpdate => throw _privateConstructorUsedError;
 
   /// Whether the user has manually pinned a country. False means the
   /// tunnel picks the best server across all countries ("Auto select") —
@@ -53,10 +51,8 @@ abstract class $AppStateCopyWith<$Res> {
     ConnectionStatus connectionStatus,
     Protocols protocol,
     VpnConfiguration? selectedServer,
-    bool zenSdkEnabled,
     bool launchOnStartup,
     bool launchOnStartupFailed,
-    bool? needsUpdate,
     bool serverSelectionPinned,
     bool? tunnelHealthy,
   });
@@ -83,10 +79,8 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
     Object? connectionStatus = null,
     Object? protocol = null,
     Object? selectedServer = freezed,
-    Object? zenSdkEnabled = null,
     Object? launchOnStartup = null,
     Object? launchOnStartupFailed = null,
-    Object? needsUpdate = freezed,
     Object? serverSelectionPinned = null,
     Object? tunnelHealthy = freezed,
   }) {
@@ -104,10 +98,6 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
                 ? _value.selectedServer
                 : selectedServer // ignore: cast_nullable_to_non_nullable
                       as VpnConfiguration?,
-            zenSdkEnabled: null == zenSdkEnabled
-                ? _value.zenSdkEnabled
-                : zenSdkEnabled // ignore: cast_nullable_to_non_nullable
-                      as bool,
             launchOnStartup: null == launchOnStartup
                 ? _value.launchOnStartup
                 : launchOnStartup // ignore: cast_nullable_to_non_nullable
@@ -116,10 +106,6 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
                 ? _value.launchOnStartupFailed
                 : launchOnStartupFailed // ignore: cast_nullable_to_non_nullable
                       as bool,
-            needsUpdate: freezed == needsUpdate
-                ? _value.needsUpdate
-                : needsUpdate // ignore: cast_nullable_to_non_nullable
-                      as bool?,
             serverSelectionPinned: null == serverSelectionPinned
                 ? _value.serverSelectionPinned
                 : serverSelectionPinned // ignore: cast_nullable_to_non_nullable
@@ -171,10 +157,8 @@ abstract class _$$AppStateImplCopyWith<$Res>
     ConnectionStatus connectionStatus,
     Protocols protocol,
     VpnConfiguration? selectedServer,
-    bool zenSdkEnabled,
     bool launchOnStartup,
     bool launchOnStartupFailed,
-    bool? needsUpdate,
     bool serverSelectionPinned,
     bool? tunnelHealthy,
   });
@@ -202,10 +186,8 @@ class __$$AppStateImplCopyWithImpl<$Res>
     Object? connectionStatus = null,
     Object? protocol = null,
     Object? selectedServer = freezed,
-    Object? zenSdkEnabled = null,
     Object? launchOnStartup = null,
     Object? launchOnStartupFailed = null,
-    Object? needsUpdate = freezed,
     Object? serverSelectionPinned = null,
     Object? tunnelHealthy = freezed,
   }) {
@@ -223,10 +205,6 @@ class __$$AppStateImplCopyWithImpl<$Res>
             ? _value.selectedServer
             : selectedServer // ignore: cast_nullable_to_non_nullable
                   as VpnConfiguration?,
-        zenSdkEnabled: null == zenSdkEnabled
-            ? _value.zenSdkEnabled
-            : zenSdkEnabled // ignore: cast_nullable_to_non_nullable
-                  as bool,
         launchOnStartup: null == launchOnStartup
             ? _value.launchOnStartup
             : launchOnStartup // ignore: cast_nullable_to_non_nullable
@@ -235,10 +213,6 @@ class __$$AppStateImplCopyWithImpl<$Res>
             ? _value.launchOnStartupFailed
             : launchOnStartupFailed // ignore: cast_nullable_to_non_nullable
                   as bool,
-        needsUpdate: freezed == needsUpdate
-            ? _value.needsUpdate
-            : needsUpdate // ignore: cast_nullable_to_non_nullable
-                  as bool?,
         serverSelectionPinned: null == serverSelectionPinned
             ? _value.serverSelectionPinned
             : serverSelectionPinned // ignore: cast_nullable_to_non_nullable
@@ -259,10 +233,8 @@ class _$AppStateImpl implements _AppState {
     required this.connectionStatus,
     required this.protocol,
     this.selectedServer,
-    required this.zenSdkEnabled,
     required this.launchOnStartup,
     required this.launchOnStartupFailed,
-    this.needsUpdate,
     this.serverSelectionPinned = false,
     this.tunnelHealthy,
   });
@@ -274,13 +246,9 @@ class _$AppStateImpl implements _AppState {
   @override
   final VpnConfiguration? selectedServer;
   @override
-  final bool zenSdkEnabled;
-  @override
   final bool launchOnStartup;
   @override
   final bool launchOnStartupFailed;
-  @override
-  final bool? needsUpdate;
 
   /// Whether the user has manually pinned a country. False means the
   /// tunnel picks the best server across all countries ("Auto select") —
@@ -299,7 +267,7 @@ class _$AppStateImpl implements _AppState {
 
   @override
   String toString() {
-    return 'AppState(connectionStatus: $connectionStatus, protocol: $protocol, selectedServer: $selectedServer, zenSdkEnabled: $zenSdkEnabled, launchOnStartup: $launchOnStartup, launchOnStartupFailed: $launchOnStartupFailed, needsUpdate: $needsUpdate, serverSelectionPinned: $serverSelectionPinned, tunnelHealthy: $tunnelHealthy)';
+    return 'AppState(connectionStatus: $connectionStatus, protocol: $protocol, selectedServer: $selectedServer, launchOnStartup: $launchOnStartup, launchOnStartupFailed: $launchOnStartupFailed, serverSelectionPinned: $serverSelectionPinned, tunnelHealthy: $tunnelHealthy)';
   }
 
   @override
@@ -313,14 +281,10 @@ class _$AppStateImpl implements _AppState {
                 other.protocol == protocol) &&
             (identical(other.selectedServer, selectedServer) ||
                 other.selectedServer == selectedServer) &&
-            (identical(other.zenSdkEnabled, zenSdkEnabled) ||
-                other.zenSdkEnabled == zenSdkEnabled) &&
             (identical(other.launchOnStartup, launchOnStartup) ||
                 other.launchOnStartup == launchOnStartup) &&
             (identical(other.launchOnStartupFailed, launchOnStartupFailed) ||
                 other.launchOnStartupFailed == launchOnStartupFailed) &&
-            (identical(other.needsUpdate, needsUpdate) ||
-                other.needsUpdate == needsUpdate) &&
             (identical(other.serverSelectionPinned, serverSelectionPinned) ||
                 other.serverSelectionPinned == serverSelectionPinned) &&
             (identical(other.tunnelHealthy, tunnelHealthy) ||
@@ -333,10 +297,8 @@ class _$AppStateImpl implements _AppState {
     connectionStatus,
     protocol,
     selectedServer,
-    zenSdkEnabled,
     launchOnStartup,
     launchOnStartupFailed,
-    needsUpdate,
     serverSelectionPinned,
     tunnelHealthy,
   );
@@ -355,10 +317,8 @@ abstract class _AppState implements AppState {
     required final ConnectionStatus connectionStatus,
     required final Protocols protocol,
     final VpnConfiguration? selectedServer,
-    required final bool zenSdkEnabled,
     required final bool launchOnStartup,
     required final bool launchOnStartupFailed,
-    final bool? needsUpdate,
     final bool serverSelectionPinned,
     final bool? tunnelHealthy,
   }) = _$AppStateImpl;
@@ -370,13 +330,9 @@ abstract class _AppState implements AppState {
   @override
   VpnConfiguration? get selectedServer;
   @override
-  bool get zenSdkEnabled;
-  @override
   bool get launchOnStartup;
   @override
   bool get launchOnStartupFailed;
-  @override
-  bool? get needsUpdate;
 
   /// Whether the user has manually pinned a country. False means the
   /// tunnel picks the best server across all countries ("Auto select") —

@@ -1,12 +1,5 @@
-import 'package:zenshield/feature/agreements/data/model/agreements_response.dart';
-
 sealed class CheckInboxSideEffect {
   const CheckInboxSideEffect();
-}
-
-class NavigateToOnboarding extends CheckInboxSideEffect {
-  const NavigateToOnboarding({required this.agreementsResponse});
-  final AgreementsResponse agreementsResponse;
 }
 
 class NavigateToNewPassword extends CheckInboxSideEffect {

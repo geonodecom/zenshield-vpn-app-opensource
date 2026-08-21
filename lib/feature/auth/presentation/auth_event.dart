@@ -77,11 +77,6 @@ class AuthTermsAcceptedChanged extends AuthEvent {
   final bool isAccepted;
 }
 
-class AuthBandwidthSharingPolicyTapped extends AuthEvent {
-  const AuthBandwidthSharingPolicyTapped({required this.languageCode});
-  final String languageCode;
-}
-
 class AuthDeepLinkErrorEvent extends AuthEvent {
   const AuthDeepLinkErrorEvent({required this.error});
   final DeepLinkError error;

@@ -17,7 +17,6 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$LogsState {
-  String? get curlLog => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
 
   /// Create a copy of LogsState
@@ -32,7 +31,7 @@ abstract class $LogsStateCopyWith<$Res> {
   factory $LogsStateCopyWith(LogsState value, $Res Function(LogsState) then) =
       _$LogsStateCopyWithImpl<$Res, LogsState>;
   @useResult
-  $Res call({String? curlLog, bool isLoading});
+  $Res call({bool isLoading});
 }
 
 /// @nodoc
@@ -49,13 +48,9 @@ class _$LogsStateCopyWithImpl<$Res, $Val extends LogsState>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? curlLog = freezed, Object? isLoading = null}) {
+  $Res call({Object? isLoading = null}) {
     return _then(
       _value.copyWith(
-            curlLog: freezed == curlLog
-                ? _value.curlLog
-                : curlLog // ignore: cast_nullable_to_non_nullable
-                      as String?,
             isLoading: null == isLoading
                 ? _value.isLoading
                 : isLoading // ignore: cast_nullable_to_non_nullable
@@ -75,7 +70,7 @@ abstract class _$$LogsStateImplCopyWith<$Res>
   ) = __$$LogsStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? curlLog, bool isLoading});
+  $Res call({bool isLoading});
 }
 
 /// @nodoc
@@ -91,13 +86,9 @@ class __$$LogsStateImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? curlLog = freezed, Object? isLoading = null}) {
+  $Res call({Object? isLoading = null}) {
     return _then(
       _$LogsStateImpl(
-        curlLog: freezed == curlLog
-            ? _value.curlLog
-            : curlLog // ignore: cast_nullable_to_non_nullable
-                  as String?,
         isLoading: null == isLoading
             ? _value.isLoading
             : isLoading // ignore: cast_nullable_to_non_nullable
@@ -110,17 +101,15 @@ class __$$LogsStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LogsStateImpl implements _LogsState {
-  const _$LogsStateImpl({this.curlLog, this.isLoading = false});
+  const _$LogsStateImpl({this.isLoading = false});
 
-  @override
-  final String? curlLog;
   @override
   @JsonKey()
   final bool isLoading;
 
   @override
   String toString() {
-    return 'LogsState(curlLog: $curlLog, isLoading: $isLoading)';
+    return 'LogsState(isLoading: $isLoading)';
   }
 
   @override
@@ -128,13 +117,12 @@ class _$LogsStateImpl implements _LogsState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LogsStateImpl &&
-            (identical(other.curlLog, curlLog) || other.curlLog == curlLog) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, curlLog, isLoading);
+  int get hashCode => Object.hash(runtimeType, isLoading);
 
   /// Create a copy of LogsState
   /// with the given fields replaced by the non-null parameter values.
@@ -146,11 +134,8 @@ class _$LogsStateImpl implements _LogsState {
 }
 
 abstract class _LogsState implements LogsState {
-  const factory _LogsState({final String? curlLog, final bool isLoading}) =
-      _$LogsStateImpl;
+  const factory _LogsState({final bool isLoading}) = _$LogsStateImpl;
 
-  @override
-  String? get curlLog;
   @override
   bool get isLoading;
 

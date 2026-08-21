@@ -2,10 +2,6 @@ import 'package:country_picker/country_picker.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zenshield/core/managers/analytics_events.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
-import 'package:zenshield/core/managers/geonode_sdk_manager.dart';
-import 'package:zenshield/feature/auth/data/auth_user_use_case.dart';
 import 'package:zenshield/core/preferences.dart';
 import 'package:zenshield/core/utils/platform_utils.dart';
 import 'package:zenshield/di/injection_container.dart';
@@ -163,17 +159,6 @@ class _AppState extends State<App> with WindowListener, WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      getIt<AbstractAnalyticsManager>().sendEvent(
-        AnalyticsEventNames.app_opened,
-        {'launch_type': 'resume'},
-      );
-      getIt<AbstractGeonodeSdkManager>().onAppResumed();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AppBloc(
@@ -181,10 +166,7 @@ class _AppState extends State<App> with WindowListener, WidgetsBindingObserver {
         eventBus: getIt<EventBus>(),
         preferences: getIt<Preferences>(),
         logger: getIt<Talker>(),
-        analyticsManager: getIt<AbstractAnalyticsManager>(),
         platformSettingsService: getIt<AbstractPlatformSettingsService>(),
-        geonodeSdkManager: getIt<AbstractGeonodeSdkManager>(),
-        authUserUseCase: getIt<AbstractAuthUserUseCase>(),
       ),
       child: BlocBuilder<AppBloc, AppState>(
         builder: (context, appState) {

@@ -8,15 +8,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zenshield/core/event_bus_events/on_deep_link_error.dart';
 import 'package:zenshield/core/event_bus_events/on_email_verification_code_received.dart';
 import 'package:zenshield/core/event_bus_events/on_forgot_password_verification_code_received.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
-import 'package:zenshield/feature/agreements/domain/useCase/agreement_use_case.dart';
 import 'package:zenshield/feature/auth/data/auth_user_use_case.dart';
 import 'package:zenshield/feature/auth/data/model/auth_models.dart';
 import 'package:zenshield/feature/deep_links/domain/deep_link_error.dart';
 import 'package:zenshield/feature/check_inbox/presentation/check_inbox_args.dart';
 import 'package:zenshield/feature/check_inbox/presentation/check_inbox_side_effect.dart';
 import 'package:zenshield/feature/check_inbox/presentation/state/check_inbox_state.dart';
-import 'package:zenshield/core/utils/mixins.dart';
 import 'package:side_effect_bloc/side_effect_bloc.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
@@ -24,23 +21,18 @@ part 'check_inbox_event.dart';
 
 class CheckInboxBloc
     extends
-        SideEffectBloc<CheckInboxEvent, CheckInboxState, CheckInboxSideEffect>
-    with AnalyticsEventSender {
+        SideEffectBloc<CheckInboxEvent, CheckInboxState, CheckInboxSideEffect> {
   CheckInboxBloc({
     required EventBus eventBus,
     required AbstractAuthUserUseCase authUseCase,
     required Talker logger,
-    required AbstractAnalyticsManager analyticsManager,
     required String email,
     required VerificationType verificationType,
-    required AbstractAgreementUseCase agreementUseCase,
   }) : _eventBus = eventBus,
        _authUseCase = authUseCase,
        _logger = logger,
-       _analyticsManager = analyticsManager,
        _email = email,
        _verificationType = verificationType,
-       _agreementUseCase = agreementUseCase,
        super(CheckInboxState.initial()) {
     on<EmailSignUpCodeReceivedEvent>(_onEmailVerificationCodeReceived);
     on<DeepLinkErrorEvent>(_onDeepLinkError);
@@ -69,10 +61,8 @@ class CheckInboxBloc
   final EventBus _eventBus;
   final AbstractAuthUserUseCase _authUseCase;
   final Talker _logger;
-  final AbstractAnalyticsManager _analyticsManager;
   final String _email;
   final VerificationType _verificationType;
-  final AbstractAgreementUseCase _agreementUseCase;
 
   StreamSubscription<OnEmailVerificationCodeReceived>?
   _verificationCodeSubscription;
@@ -81,8 +71,6 @@ class CheckInboxBloc
   StreamSubscription<OnForgotPasswordCodeReceived>?
   _forgotPasswordCodeSubscription;
 
-  @override
-  AbstractAnalyticsManager get analyticsManager => _analyticsManager;
   void unsubscribeFromDeepLinks() {
     _verificationCodeSubscription?.cancel();
     _deepLinkErrorSubscription?.cancel();
@@ -117,19 +105,6 @@ class CheckInboxBloc
         await _authUseCase.verifyCode(_email, event.code, session.authType!);
 
         _logger.info('Verification code verified');
-
-        final agreementsResponse = await _agreementUseCase
-            .getAgreementsResponse();
-
-        _logger.info(
-          'Has pending agreements: ${agreementsResponse.agreement != null}',
-        );
-        if (agreementsResponse.agreement != null) {
-          produceSideEffect(
-            NavigateToOnboarding(agreementsResponse: agreementsResponse),
-          );
-          return;
-        }
 
         produceSideEffect(NavigateToHome());
       } else {

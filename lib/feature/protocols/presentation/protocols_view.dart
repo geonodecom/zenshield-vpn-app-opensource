@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:zenshield/core/managers/analytics_events.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
-import 'package:zenshield/di/injection_container.dart';
 import 'package:zenshield/l10n/app_localizations.dart';
 import 'package:zenshield/config/theme/app_colors/app_colors.dart';
 import 'package:zenshield/config/theme/app_text_styles/app_text_styles.dart';
@@ -12,7 +9,6 @@ import 'package:zenshield/feature/protocols/data/model/protocol/protocol.dart';
 import 'package:zenshield/core/models/protocols.dart';
 import 'package:zenshield/feature/app/presentation/app_bloc.dart';
 import 'package:zenshield/feature/protocols/presentation/protocols_bloc.dart';
-import 'package:zenshield/core/utils/mixins.dart';
 
 class ProtocolsView extends StatefulWidget {
   const ProtocolsView({super.key});
@@ -23,9 +19,6 @@ class ProtocolsView extends StatefulWidget {
   State<ProtocolsView> createState() => _ProtocolsViewState();
 
   static Future<T?> show<T>(BuildContext context) {
-    final analyticsManager = getIt<AbstractAnalyticsManager>();
-    analyticsManager.sendEvent(AnalyticsEventNames.app_opened, null);
-
     return showCupertinoModalBottomSheet<T>(
       context: context,
       topRadius: const Radius.circular(28),
@@ -76,12 +69,7 @@ class _ProtocolsModalContent extends StatefulWidget {
   State<_ProtocolsModalContent> createState() => _ProtocolsModalContentState();
 }
 
-class _ProtocolsModalContentState extends State<_ProtocolsModalContent>
-    with AnalyticsEventSender {
-  @override
-  AbstractAnalyticsManager get analyticsManager =>
-      getIt<AbstractAnalyticsManager>();
-
+class _ProtocolsModalContentState extends State<_ProtocolsModalContent> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -159,10 +147,6 @@ class _ProtocolsModalContentState extends State<_ProtocolsModalContent>
                     isRecommended: protocol.isBest,
                     onTap: () {
                       HapticFeedback.lightImpact();
-                      sendAnalyticsEvent(
-                        AnalyticsEventNames.protocol_changed,
-                        protocol.type.name.asAnalyticsParam('protocol'),
-                      );
                       appBloc.add(SelectProtocolEvent(protocol.type));
                       Navigator.of(context).pop();
                     },

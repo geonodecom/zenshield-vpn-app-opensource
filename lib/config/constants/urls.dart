@@ -5,10 +5,6 @@ class Urls {
   static Uri privacyPolicy({required String languageCode}) => Uri.parse(
         'https://www.zenshield.com/privacy-policy',
       );
-  static Uri bandwidthSharingPolicy({required String languageCode}) =>
-      Uri.parse(
-        'https://www.zenshield.com/bandwidth-sharing-policy',
-      );
 
   static Uri endUserLicenseAgreement({required String languageCode}) =>
       Uri.parse(

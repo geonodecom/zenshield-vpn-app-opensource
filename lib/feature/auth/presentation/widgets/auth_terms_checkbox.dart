@@ -81,7 +81,6 @@ class AuthTermsCheckbox extends StatelessWidget {
     final terms = [
       'End User License Agreement (EULA)',
       'Privacy Policy',
-      'Bandwidth Sharing Policy',
     ];
     final spans = <TextSpan>[];
     int lastIndex = 0;
@@ -142,29 +141,6 @@ class AuthTermsCheckbox extends StatelessWidget {
                     builder: (_) => LegalDocumentView(
                       title: l10n?.aboutPrivacyPolicy ?? 'Privacy Policy',
                       url: Urls.privacyPolicy(languageCode: languageCode),
-                    ),
-                  ),
-                );
-              }
-            };
-        } else if (term == 'Bandwidth Sharing Policy') {
-          recognizer = TapGestureRecognizer()
-            ..onTap = () {
-              final languageCode = Localizations.localeOf(context).languageCode;
-              if (PlatformUtils.isDesktop) {
-                context.read<AuthBloc>().add(
-                  AuthBandwidthSharingPolicyTapped(languageCode: languageCode),
-                );
-              } else {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => LegalDocumentView(
-                      title:
-                          l10n?.aboutBandwidthSharingPolicy ??
-                          'Bandwidth Sharing Policy',
-                      url: Urls.bandwidthSharingPolicy(
-                        languageCode: languageCode,
-                      ),
                     ),
                   ),
                 );

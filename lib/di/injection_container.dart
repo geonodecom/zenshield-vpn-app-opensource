@@ -12,16 +12,11 @@ import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:zenshield/core/interceptors/auth_interceptor.dart';
 import 'package:zenshield/di/injection_container.config.dart';
-import 'package:zenshield/feature/android_updater/data/repoImplementation/android_updater_use_case.dart';
-import 'package:zenshield/feature/desktop_updater/domain/useCase/desktop_updater_use_case.dart';
-import 'package:zenshield/feature/desktop_updater/data/repoImplementation/desktop_updater_use_case_impl.dart';
-import 'package:zenshield/feature/rating/data/dataSources/platform_review_requester.dart';
 import 'package:zenshield/feature/singbox/data/command_client/command_client_factory.dart';
 import 'package:zenshield/feature/singbox/data/command_client/socket_service.dart';
 import 'package:zenshield/feature/singbox/data/ffi_singbox_service.dart';
 import 'package:zenshield/feature/singbox/data/platform_singbox_service.dart';
 import 'package:zenshield/feature/singbox/data/singbox_service.dart';
-import 'package:zenshield/feature/windows_updater/data/repoImplementation/windows_updater_use_case.dart';
 import 'package:zenshield/core/utils/talker_observer.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:talker_bloc_logger/talker_bloc_logger_settings.dart';
@@ -164,41 +159,6 @@ abstract class SingboxModule {
 abstract class RouterModule {
   @LazySingleton()
   AppRouter appRouter() => AppRouter();
-}
-
-@module
-abstract class UpdaterModule {
-  @lazySingleton
-  AbstractDesktopUpdaterUseCase updaterUseCase(
-    DesktopUpdaterUseCase desktopUpdater,
-    AndroidUpdaterUseCase androidUpdater,
-    WindowsUpdaterUseCase windowsUpdater,
-  ) {
-    if (Platform.isAndroid) {
-      return androidUpdater;
-    }
-    // Windows ships a full installer, so it updates like Android does; macOS
-    // and Linux still use the package's file-by-file flow.
-    if (Platform.isWindows) {
-      return windowsUpdater;
-    }
-    return desktopUpdater;
-  }
-}
-
-@module
-abstract class PlatformReviewRequesterModule {
-  @lazySingleton
-  AbstractPlatformReviewRequester platformReviewRequester(
-    AndroidReviewRequester androidRequester,
-    DefaultReviewRequester defaultRequester,
-  ) {
-    if (Platform.isAndroid) {
-      return androidRequester;
-    } else {
-      return defaultRequester;
-    }
-  }
 }
 
 @InjectableInit()

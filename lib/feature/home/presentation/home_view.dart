@@ -2,14 +2,8 @@ import 'package:country_picker/country_picker.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
-import 'package:zenshield/core/managers/geonode_sdk_manager.dart';
-import 'package:zenshield/feature/auth/data/auth_user_use_case.dart';
-import 'package:zenshield/core/preferences.dart';
 import 'package:zenshield/core/utils/platform_utils.dart';
 import 'package:zenshield/di/injection_container.dart';
-import 'package:zenshield/feature/desktop_updater/domain/useCase/desktop_updater_use_case.dart';
-import 'package:zenshield/feature/rating/domain/useCase/rating_use_case.dart';
 import 'package:zenshield/feature/connection/data/model/connection_status/connection_status.dart';
 import 'package:zenshield/feature/servers/data/model/vpn_configuration/vpn_configuration.dart';
 import 'package:zenshield/feature/servers/domain/repositories/servers_repository.dart';
@@ -18,16 +12,12 @@ import 'package:zenshield/gen/assets.gen.dart';
 import 'package:zenshield/core/widgets/black_circular_progress_indicator.dart';
 import 'package:zenshield/core/widgets/items/home_server_item.dart';
 import 'package:zenshield/core/widgets/containers/rotating_container.dart';
-import 'package:zenshield/core/widgets/rate_app_popup.dart';
-import 'package:zenshield/core/widgets/app_update_banner.dart';
 import 'package:zenshield/core/widgets/error_dialog.dart';
-import 'package:zenshield/core/widgets/update_required_popup.dart';
 import 'package:zenshield/feature/about/presentation/about_view.dart';
 import 'package:zenshield/feature/home/presentation/home_bloc.dart';
 import 'package:zenshield/feature/home/presentation/home_side_effect.dart';
 import 'package:zenshield/feature/servers/presentation/servers_view.dart';
 import 'package:zenshield/feature/settings/presentation/settings_view.dart';
-import 'package:zenshield/core/utils/mixins.dart';
 import 'package:zenshield/core/utils/string_utils.dart';
 import 'package:side_effect_bloc/side_effect_bloc.dart';
 import 'package:talker_flutter/talker_flutter.dart';
@@ -54,14 +44,8 @@ class HomeView extends StatelessWidget {
       create: (context) => HomeBloc(
         vpnManager: getIt<AbstractVpnManager>(),
         eventBus: getIt<EventBus>(),
-        analyticsManager: getIt<AbstractAnalyticsManager>(),
         logger: getIt<Talker>(),
         serverRepository: getIt<AbstractServersRepository>(),
-        desktopUpdaterUseCase: getIt<AbstractDesktopUpdaterUseCase>(),
-        preferences: getIt<Preferences>(),
-        ratingUseCase: getIt<AbstractRatingUseCase>(),
-        geonodeSdkManager: getIt<AbstractGeonodeSdkManager>(),
-        authUserUseCase: getIt<AbstractAuthUserUseCase>(),
       )..add(InitialEvent(connectionStatus: appBloc.state.connectionStatus)),
       child: BlocSideEffectListener<app.AppBloc, AppSideEffect>(
         listener: (context, sideEffect) async {
@@ -145,44 +129,6 @@ class HomeView extends StatelessWidget {
                 await ServersView.show(context);
               case NavigateToAbout():
                 await Navigator.of(context).pushNamed(AboutView.routeName);
-              case NavigateToAppUpdate():
-                await Navigator.of(
-                  context,
-                ).pushNamed('/app-update', arguments: null);
-              case ShowUpdatePopup():
-                await UpdateRequiredPopup.show(
-                  context,
-                  isDismissible: true,
-                  onDismissTap: () {
-                    Navigator.of(context).pop();
-                    if (context.mounted) {
-                      context.read<HomeBloc>().add(
-                        const CloseUpdatePopupEvent(),
-                      );
-                    }
-                  },
-                  onUpdateTap: () {
-                    Navigator.of(context).pop();
-                    if (context.mounted) {
-                      context.read<HomeBloc>().add(
-                        const CloseUpdatePopupEvent(),
-                      );
-                      Navigator.of(
-                        context,
-                      ).pushReplacementNamed('/app-update', arguments: null);
-                    }
-                  },
-                );
-
-                if (context.mounted) {
-                  context.read<HomeBloc>().add(const CloseUpdatePopupEvent());
-                }
-              case RequestLocalReview():
-                final onSuccess = sideEffect.onSuccess;
-                await RateAppPopup.show<void>(
-                  context,
-                  onContinueTap: onSuccess,
-                );
             }
           },
           child: _HomeContent(),
@@ -233,11 +179,7 @@ class _HomeContent extends StatefulWidget {
   State<_HomeContent> createState() => _HomeContentState();
 }
 
-class _HomeContentState extends State<_HomeContent> with AnalyticsEventSender {
-  @override
-  AbstractAnalyticsManager get analyticsManager =>
-      getIt<AbstractAnalyticsManager>();
-
+class _HomeContentState extends State<_HomeContent> {
   @override
   Widget build(BuildContext context) {
     final appColors = AppColors();
@@ -296,8 +238,6 @@ class _HomeContentState extends State<_HomeContent> with AnalyticsEventSender {
     final countryCode = showAutoPlaceholder
         ? null
         : appState.selectedServer?.region.countryCode;
-    final showUpdateBanner =
-        homeState.showUpdateBanner && homeState.updateVersion != null;
     final spacingAfterServerItem = MediaQuery.of(context).padding.bottom == 0
         ? 45.0
         : 32.0;
@@ -422,21 +362,6 @@ class _HomeContentState extends State<_HomeContent> with AnalyticsEventSender {
                 );
               },
             ),
-            if (showUpdateBanner)
-              Positioned(
-                top: 50,
-                left: 0,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                  child: AppUpdatedBanner(
-                    version: homeState.updateVersion!,
-                    onClose: () {
-                      homeBloc.add(const CloseUpdateBannerEvent());
-                    },
-                  ),
-                ),
-              ),
           ],
         ),
       ),
@@ -472,8 +397,6 @@ class _HomeContentState extends State<_HomeContent> with AnalyticsEventSender {
           children: [
             Row(
               children: [
-                //ZenSdkStatusBadge(),
-                //SizedBox(width: 12),
                 Padding(
                   // On desktop the OS title bar already separates the
                   // window content from the top edge, so the extra nudge
@@ -816,54 +739,6 @@ class ConnectButton extends StatelessWidget {
                     .copyWith(fontWeight: FontWeight.w400),
                 textAlign: TextAlign.center,
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ZenSdkStatusBadge extends StatelessWidget {
-  const ZenSdkStatusBadge({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final appColors = AppColors();
-    final appTextStyles = AppTextStyles();
-    final l10n = AppLocalizations.of(context);
-    final appBloc = context.watch<app.AppBloc>();
-    final zenSdkEnabled = appBloc.state.zenSdkEnabled;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
-      decoration: BoxDecoration(
-        color: zenSdkEnabled ? appColors.background : appColors.redBackground,
-        border: Border.all(
-          color: zenSdkEnabled
-              ? appColors.grayBackground
-              : appColors.redLight.withValues(alpha: 0.3),
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: zenSdkEnabled ? appColors.green : appColors.redLight,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            zenSdkEnabled
-                ? (l10n?.homeZenSdkIsActive ?? 'ZenSDK is active')
-                : (l10n?.homeZenSdkIsDisabled ?? 'ZenSDK is disabled'),
-            style: appTextStyles.interMedium14(
-              color: zenSdkEnabled ? appColors.grayMedium : appColors.redDark,
             ),
           ),
         ],

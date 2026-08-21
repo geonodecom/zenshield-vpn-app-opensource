@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
 import 'package:zenshield/core/preferences.dart';
 import 'package:zenshield/di/injection_container.dart';
 import 'package:zenshield/feature/servers/data/model/vpn_configuration/vpn_configuration.dart';
@@ -57,7 +56,6 @@ class _ServersViewState extends State<ServersView> {
       serversRepository: getIt<AbstractServersRepository>(),
       eventBus: getIt<EventBus>(),
       logger: getIt<Talker>(),
-      analyticsManager: getIt<AbstractAnalyticsManager>(),
       preferences: getIt<Preferences>(),
     );
   }

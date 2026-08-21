@@ -73,12 +73,3 @@ class AutoSelectRequestedAppEvent extends AppEvent {
   @override
   List<Object?> get props => [];
 }
-
-class ZenSdkChangedEvent extends AppEvent {
-  const ZenSdkChangedEvent(this.value);
-
-  final bool value;
-
-  @override
-  List<Object?> get props => [value];
-}

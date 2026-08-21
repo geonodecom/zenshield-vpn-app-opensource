@@ -94,147 +94,11 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[Locale('en')];
 
-  /// No description provided for @onboardingPage1Title.
-  ///
-  /// In en, this message translates to:
-  /// **'A Free VPN Built on Trust'**
-  String get onboardingPage1Title;
-
-  /// No description provided for @onboardingPage1Text.
-  ///
-  /// In en, this message translates to:
-  /// **'Zenshield protects your privacy and stays free by securely sharing a small portion of unused bandwidth, never your personal data.'**
-  String get onboardingPage1Text;
-
-  /// No description provided for @onboardingPage1TextIos.
-  ///
-  /// In en, this message translates to:
-  /// **'Zenshield protects your privacy and keeps your online activity private. No subscription required.'**
-  String get onboardingPage1TextIos;
-
-  /// No description provided for @onboardingPage2Title.
-  ///
-  /// In en, this message translates to:
-  /// **'Privacy and Transparency'**
-  String get onboardingPage2Title;
-
-  /// No description provided for @onboardingPage2Text.
-  ///
-  /// In en, this message translates to:
-  /// **'Before continuing, please review and agree to our {eula}, {privacyPolicy}. Zenshield collects limited account information, such as your email address, to provide and secure the service.'**
-  String onboardingPage2Text(String eula, String privacyPolicy);
-
-  /// No description provided for @onboardingPage2Eula.
-  ///
-  /// In en, this message translates to:
-  /// **'End User License Agreement (EULA)'**
-  String get onboardingPage2Eula;
-
-  /// No description provided for @onboardingPage2PrivacyPolicy.
-  ///
-  /// In en, this message translates to:
-  /// **'Privacy Policy'**
-  String get onboardingPage2PrivacyPolicy;
-
-  /// No description provided for @onboardingPage2BandwidthSharingPolicy.
-  ///
-  /// In en, this message translates to:
-  /// **'Bandwidth Sharing Policy'**
-  String get onboardingPage2BandwidthSharingPolicy;
-
-  /// No description provided for @onboardingPage2TextAndroid.
-  ///
-  /// In en, this message translates to:
-  /// **'Before continuing, please review and agree to our {eula}, {privacyPolicy} and {bandwidthSharingPolicy}. Zenshield collects limited account information, such as your email address, to provide and secure the service.'**
-  String onboardingPage2TextAndroid(
-    String eula,
-    String privacyPolicy,
-    String bandwidthSharingPolicy,
-  );
-
-  /// No description provided for @onboardingPage3Title.
-  ///
-  /// In en, this message translates to:
-  /// **'Why Zenshield is Free'**
-  String get onboardingPage3Title;
-
-  /// No description provided for @onboardingPage3Text.
-  ///
-  /// In en, this message translates to:
-  /// **'Zenshield stays free because users share a small, encrypted portion of their unused internet connection. This shared bandwidth helps trusted businesses perform legitimate online tasks such as web indexing and data verification.\n\nYour personal data and browsing activity are never collected or exposed'**
-  String get onboardingPage3Text;
-
-  /// No description provided for @onboardingPage3BandwidthSharing.
-  ///
-  /// In en, this message translates to:
-  /// **'Bandwidth Sharing Policy'**
-  String get onboardingPage3BandwidthSharing;
-
   /// No description provided for @buttonContinue.
   ///
   /// In en, this message translates to:
   /// **'Continue'**
   String get buttonContinue;
-
-  /// No description provided for @buttonAgreeAndContinue.
-  ///
-  /// In en, this message translates to:
-  /// **'Agree & Continue'**
-  String get buttonAgreeAndContinue;
-
-  /// No description provided for @buttonIDisagree.
-  ///
-  /// In en, this message translates to:
-  /// **'I Disagree'**
-  String get buttonIDisagree;
-
-  /// No description provided for @bandwidthSharingModalTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Help Keep Zenshield Free'**
-  String get bandwidthSharingModalTitle;
-
-  /// No description provided for @bandwidthSharingModalText1.
-  ///
-  /// In en, this message translates to:
-  /// **'Bandwidth sharing is optional. You can use Zenshield without it — you can turn it on or off any time.'**
-  String get bandwidthSharingModalText1;
-
-  /// No description provided for @bandwidthSharingModalText2.
-  ///
-  /// In en, this message translates to:
-  /// **'Zenshield stays free because users share a small, encrypted portion of their unused internet connection.'**
-  String get bandwidthSharingModalText2;
-
-  /// No description provided for @bandwidthSharingModalText3.
-  ///
-  /// In en, this message translates to:
-  /// **'This shared bandwidth helps trusted businesses perform legitimate online tasks such as web indexing and data verification.'**
-  String get bandwidthSharingModalText3;
-
-  /// No description provided for @bandwidthSharingModalText4.
-  ///
-  /// In en, this message translates to:
-  /// **'Your personal data and browsing activity are never collected or exposed. Learn more in our'**
-  String get bandwidthSharingModalText4;
-
-  /// No description provided for @bandwidthSharingModalButtonAgree.
-  ///
-  /// In en, this message translates to:
-  /// **'I Agree'**
-  String get bandwidthSharingModalButtonAgree;
-
-  /// No description provided for @bandwidthSharingModalButtonSubtext.
-  ///
-  /// In en, this message translates to:
-  /// **'Allow app to use idle resources for network boost'**
-  String get bandwidthSharingModalButtonSubtext;
-
-  /// No description provided for @bandwidthSharingModalButtonNotNow.
-  ///
-  /// In en, this message translates to:
-  /// **'Not now'**
-  String get bandwidthSharingModalButtonNotNow;
 
   /// No description provided for @emailHint.
   ///
@@ -329,7 +193,7 @@ abstract class AppLocalizations {
   /// No description provided for @termsAgreement.
   ///
   /// In en, this message translates to:
-  /// **'I agree to the End User License Agreement (EULA), Privacy Policy and Bandwidth Sharing Policy.'**
+  /// **'I agree to the End User License Agreement (EULA), Privacy Policy.'**
   String get termsAgreement;
 
   /// No description provided for @termsAgreementIos.
@@ -439,18 +303,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connect'**
   String get homeConnect;
-
-  /// No description provided for @homeZenSdkIsActive.
-  ///
-  /// In en, this message translates to:
-  /// **'ZenSDK is active'**
-  String get homeZenSdkIsActive;
-
-  /// No description provided for @homeZenSdkIsDisabled.
-  ///
-  /// In en, this message translates to:
-  /// **'ZenSDK is disabled'**
-  String get homeZenSdkIsDisabled;
 
   /// No description provided for @homeConnected.
   ///
@@ -632,18 +484,6 @@ abstract class AppLocalizations {
   /// **'Zenshield is a free VPN that lets you access geo-restricted content, browse securely on public Wi-Fi, and keep your online activity private. No subscription required.'**
   String get aboutWhatIsZenshieldDescription;
 
-  /// No description provided for @aboutBandwidthSharingTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Bandwidth Sharing Policy'**
-  String get aboutBandwidthSharingTitle;
-
-  /// No description provided for @aboutBandwidthSharingDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Zenshield is free because users contribute a small slice of their unused internet bandwidth to the Geonode data network. Your data is never accessed. Only network traffic is routed through your device.'**
-  String get aboutBandwidthSharingDescription;
-
   /// No description provided for @aboutLegalAndSupportTitle.
   ///
   /// In en, this message translates to:
@@ -667,12 +507,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Support Center'**
   String get aboutSupportCenter;
-
-  /// No description provided for @aboutBandwidthSharingPolicy.
-  ///
-  /// In en, this message translates to:
-  /// **'Bandwidth Sharing Policy'**
-  String get aboutBandwidthSharingPolicy;
 
   /// No description provided for @aboutEndUserLicenseAgreement.
   ///
@@ -806,36 +640,6 @@ abstract class AppLocalizations {
   /// **' to tell us directly.'**
   String get rateAppPopupFeedbackSuffix;
 
-  /// No description provided for @updateRequiredPopupTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Update Required'**
-  String get updateRequiredPopupTitle;
-
-  /// No description provided for @updateRequiredPopupMessage1.
-  ///
-  /// In en, this message translates to:
-  /// **'Your current version of Zenshield VPN is\nout of date.'**
-  String get updateRequiredPopupMessage1;
-
-  /// No description provided for @updateRequiredPopupMessage2.
-  ///
-  /// In en, this message translates to:
-  /// **'Please install the latest version to\ncontinue using the app securely and\nwithout interruptions.'**
-  String get updateRequiredPopupMessage2;
-
-  /// No description provided for @updateRequiredPopupButtonDownload.
-  ///
-  /// In en, this message translates to:
-  /// **'Download Update'**
-  String get updateRequiredPopupButtonDownload;
-
-  /// No description provided for @updateRequiredPopupButtonRemindLater.
-  ///
-  /// In en, this message translates to:
-  /// **'Remind Me Later'**
-  String get updateRequiredPopupButtonRemindLater;
-
   /// No description provided for @resetPasswordTitle.
   ///
   /// In en, this message translates to:
@@ -937,84 +741,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The email you entered is already in use. Please try again.'**
   String get emailEmploymentErrorText;
-
-  /// No description provided for @appUpdateChecking.
-  ///
-  /// In en, this message translates to:
-  /// **'Checking for updates…'**
-  String get appUpdateChecking;
-
-  /// No description provided for @appUpdateDownloading.
-  ///
-  /// In en, this message translates to:
-  /// **'Downloading update'**
-  String get appUpdateDownloading;
-
-  /// No description provided for @appUpdateInstalling.
-  ///
-  /// In en, this message translates to:
-  /// **'Installing'**
-  String get appUpdateInstalling;
-
-  /// No description provided for @appUpdateRestarting.
-  ///
-  /// In en, this message translates to:
-  /// **'Restarting Zenshield'**
-  String get appUpdateRestarting;
-
-  /// No description provided for @appUpdateError.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t update right now'**
-  String get appUpdateError;
-
-  /// No description provided for @appUpdateRetry.
-  ///
-  /// In en, this message translates to:
-  /// **'Retry'**
-  String get appUpdateRetry;
-
-  /// No description provided for @appUpdateOpenAppAnyway.
-  ///
-  /// In en, this message translates to:
-  /// **'Open app anyway'**
-  String get appUpdateOpenAppAnyway;
-
-  /// No description provided for @updateAvailablePopupTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Update available'**
-  String get updateAvailablePopupTitle;
-
-  /// No description provided for @updateAvailablePopupMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'A new version is available'**
-  String get updateAvailablePopupMessage;
-
-  /// No description provided for @updateAvailablePopupButtonUpdate.
-  ///
-  /// In en, this message translates to:
-  /// **'Update now'**
-  String get updateAvailablePopupButtonUpdate;
-
-  /// No description provided for @updateAvailablePopupButtonRemindLater.
-  ///
-  /// In en, this message translates to:
-  /// **'Remind me later'**
-  String get updateAvailablePopupButtonRemindLater;
-
-  /// No description provided for @updateAvailablePopupTimer.
-  ///
-  /// In en, this message translates to:
-  /// **'Restarting in {time}'**
-  String updateAvailablePopupTimer(String time);
-
-  /// No description provided for @homeAppWasUpdated.
-  ///
-  /// In en, this message translates to:
-  /// **'App was updated to version {version}'**
-  String homeAppWasUpdated(String version);
 
   /// No description provided for @appTitle.
   ///

@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:zenshield/core/widgets/transitions/fade_page_route_builder.dart';
 import 'package:zenshield/feature/home/presentation/home_view.dart';
-import 'package:zenshield/feature/onboarding_progress/presentation/onboarding_progress_view.dart';
-import 'package:zenshield/feature/geonode_key_setup/presentation/geonode_key_setup_view.dart';
 import 'package:zenshield/feature/splash/presentation/splash_view.dart';
 import 'package:zenshield/feature/settings/presentation/settings_view.dart';
 import 'package:zenshield/feature/auth/presentation/auth_view.dart';
@@ -12,8 +10,6 @@ import 'package:zenshield/feature/check_inbox/presentation/check_inbox_view.dart
 import 'package:zenshield/feature/check_inbox/presentation/check_inbox_args.dart';
 import 'package:zenshield/feature/about/presentation/about_view.dart';
 import 'package:zenshield/feature/logs/presentation/logs_view.dart';
-import 'package:zenshield/feature/app_update/presentation/app_update_bloc.dart';
-import 'package:zenshield/feature/app_update/presentation/app_update_view.dart';
 import 'package:zenshield/feature/new_password/presentation/new_password_view.dart';
 import 'package:zenshield/feature/new_password/presentation/new_password_success_view.dart';
 import 'package:zenshield/feature/reset_password/presentation/reset_password_view.dart';
@@ -32,12 +28,6 @@ class AppRouter {
     final routeName = settings.name;
 
     switch (routeName) {
-      case AppUpdateView.routeName:
-        final startEvent = settings.arguments as AppUpdateEvent?;
-        return FadePageRouteBuilder(
-          page: AppUpdateView(startEvent: startEvent),
-          settings: settings,
-        );
       case SplashView.routeName:
         return FadePageRouteBuilder(
           page: const SplashView(),
@@ -45,16 +35,6 @@ class AppRouter {
         );
       case HomeView.routeName:
         return FadePageRouteBuilder(page: HomeView(), settings: settings);
-      case OnboardingProgressView.routeName:
-        return FadePageRouteBuilder(
-          page: const OnboardingProgressView(),
-          settings: settings,
-        );
-      case GeonodeKeySetupView.routeName:
-        return FadePageRouteBuilder(
-          page: const GeonodeKeySetupView(),
-          settings: settings,
-        );
       case SettingsView.routeName:
         return _createPlatformRoute(
           page: const SettingsView(),

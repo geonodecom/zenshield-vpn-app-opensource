@@ -11,10 +11,8 @@ class AppState with _$AppState {
     required ConnectionStatus connectionStatus,
     required Protocols protocol,
     VpnConfiguration? selectedServer,
-    required bool zenSdkEnabled,
     required bool launchOnStartup,
     required bool launchOnStartupFailed,
-    bool? needsUpdate,
 
     /// Whether the user has manually pinned a country. False means the
     /// tunnel picks the best server across all countries ("Auto select") —
@@ -32,9 +30,7 @@ class AppState with _$AppState {
   factory AppState.initial() => const AppState(
         connectionStatus: ConnectionStatus.disconnected(),
         protocol: Protocols.auto,
-        zenSdkEnabled: false,
         launchOnStartup: false,
         launchOnStartupFailed: false,
-        needsUpdate: null,
       );
 }

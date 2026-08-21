@@ -1,20 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:side_effect_bloc/side_effect_bloc.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:zenshield/config/constants/urls.dart';
 import 'package:zenshield/config/theme/app_colors/app_colors.dart';
 import 'package:zenshield/config/theme/app_text_styles/app_text_styles.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
 import 'package:zenshield/core/utils/platform_utils.dart';
 import 'package:zenshield/di/injection_container.dart';
 import 'package:zenshield/feature/about/presentation/about_bloc.dart';
-import 'package:zenshield/feature/about/presentation/about_side_effect.dart';
 import 'package:zenshield/feature/about/presentation/about_view.dart';
 import 'package:zenshield/feature/about/presentation/legal_document_view.dart';
-import 'package:zenshield/feature/agreements/domain/useCase/agreement_use_case.dart';
 import 'package:zenshield/l10n/app_localizations.dart';
 
 /// "About & Legal" card shown on the Profile (settings) page: an About row
@@ -26,30 +20,8 @@ class AboutAndLegalSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AboutBloc(
-        logger: getIt<Talker>(),
-        analyticsManager: getIt<AbstractAnalyticsManager>(),
-        agreementUseCase: getIt<AbstractAgreementUseCase>(),
-      ),
-      child: BlocSideEffectListener<AboutBloc, AboutSideEffect>(
-        listener: (context, sideEffect) async {
-          if (sideEffect is ShowBandwidthSharingPolicyPage) {
-            final l10n = AppLocalizations.of(context);
-            await Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => LegalDocumentView(
-                  title:
-                      l10n?.aboutBandwidthSharingPolicy ??
-                      'Bandwidth Sharing Policy',
-                  htmlContent: sideEffect.htmlContent,
-                  url: sideEffect.fallbackUrl,
-                ),
-              ),
-            );
-          }
-        },
-        child: const _SectionContent(),
-      ),
+      create: (context) => AboutBloc(logger: getIt<Talker>()),
+      child: const _SectionContent(),
     );
   }
 }
@@ -61,7 +33,6 @@ class _SectionContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final aboutBloc = context.watch<AboutBloc>();
-    final isLoadingAgreement = aboutBloc.state.isLoadingAgreement;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,20 +98,6 @@ class _SectionContent extends StatelessWidget {
                 }
               },
             ),
-            if (!Platform.isIOS)
-              _LinkRow(
-                icon: Icons.policy_outlined,
-                title:
-                    l10n?.aboutBandwidthSharingPolicy ??
-                    'Bandwidth Sharing Policy',
-                isLoading: isLoadingAgreement,
-                onTap: () {
-                  final languageCode = Localizations.localeOf(
-                    context,
-                  ).languageCode;
-                  aboutBloc.add(OpenBandwidthSharingPolicyEvent(languageCode));
-                },
-              ),
           ],
         ),
       ],
@@ -217,13 +174,11 @@ class _LinkRow extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.onTap,
-    this.isLoading = false,
   });
 
   final IconData icon;
   final String title;
   final VoidCallback onTap;
-  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +187,7 @@ class _LinkRow extends StatelessWidget {
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: isLoading ? null : onTap,
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.only(
           left: 10,
@@ -262,21 +217,11 @@ class _LinkRow extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            if (isLoading)
-              SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: appColors.grayLighter,
-                ),
-              )
-            else
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 22,
-                color: appColors.grayLighter,
-              ),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 22,
+              color: appColors.grayLighter,
+            ),
           ],
         ),
       ),

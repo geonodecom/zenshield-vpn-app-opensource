@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zenshield/config/theme/app_colors/app_colors.dart';
 import 'package:zenshield/config/theme/app_text_styles/app_text_styles.dart';
-import 'package:zenshield/core/utils/mixins.dart';
 import 'package:zenshield/gen/assets.gen.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
-import 'package:zenshield/di/injection_container.dart';
 import 'package:zenshield/feature/auth/presentation/auth_bloc.dart';
 import 'package:zenshield/feature/auth/presentation/widgets/auth_email_field.dart';
 import 'package:zenshield/feature/auth/presentation/widgets/auth_header.dart';
@@ -34,12 +31,7 @@ class _SignUpContent extends StatefulWidget {
   State<_SignUpContent> createState() => _SignUpContentState();
 }
 
-class _SignUpContentState extends State<_SignUpContent>
-    with AnalyticsEventSender {
-  @override
-  AbstractAnalyticsManager get analyticsManager =>
-      getIt<AbstractAnalyticsManager>();
-
+class _SignUpContentState extends State<_SignUpContent> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   final FocusNode _emailFocusNode = FocusNode();

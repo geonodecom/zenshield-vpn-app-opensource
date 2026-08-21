@@ -1,27 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:zenshield/config/theme/app_colors/app_colors.dart';
 import 'package:zenshield/config/theme/app_text_styles/app_text_styles.dart';
-import 'package:zenshield/core/widgets/bandwidth_policy_markdown.dart';
 import 'package:zenshield/core/widgets/web_view.dart';
 import 'package:zenshield/gen/assets.gen.dart';
 
 /// Full-page viewer for legal/policy documents, used instead of a bottom
-/// sheet so EULA, Privacy Policy and Bandwidth Sharing Policy all open the
-/// same way: a normal in-app page with a back button.
+/// sheet so EULA and Privacy Policy both open the same way: a normal in-app
+/// page with a back button.
 class LegalDocumentView extends StatelessWidget {
   const LegalDocumentView({
     super.key,
     required this.title,
-    this.url,
-    this.htmlContent,
-  }) : assert(
-         url != null || htmlContent != null,
-         'Either url or htmlContent must be provided',
-       );
+    required this.url,
+  });
 
   final String title;
-  final Uri? url;
-  final String? htmlContent;
+  final Uri url;
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +69,7 @@ class LegalDocumentView extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: htmlContent != null && htmlContent!.isNotEmpty
-                  ? BandwidthPolicyMarkdown(content: htmlContent)
-                  : WebView(url: url!),
+              child: WebView(url: url),
             ),
           ],
         ),

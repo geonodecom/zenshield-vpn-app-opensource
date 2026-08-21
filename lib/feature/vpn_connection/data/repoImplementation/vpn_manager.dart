@@ -2,14 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:zenshield/config/constants/secure_storage_keys.dart';
-import 'package:zenshield/core/managers/analytics_events.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
-import 'package:zenshield/core/managers/analytics_schema.dart';
 import 'package:zenshield/core/event_bus_events/active_server_resolved.dart';
 import 'package:zenshield/core/event_bus_events/tunnel_health_changed.dart';
 import 'package:zenshield/core/event_bus_events/vpn_state_changed.dart';
@@ -44,7 +40,6 @@ class VpnManager implements AbstractVpnManager {
     required Talker logger,
     required EventBus eventBus,
     required AbstractServersRepository serversRepository,
-    required AbstractAnalyticsManager analyticsManager,
     required AbstractPlatformSettingsService platformSettingsService,
   })  : _singboxService = singboxService,
         _timerFactory = timerFactory,
@@ -55,7 +50,6 @@ class VpnManager implements AbstractVpnManager {
         _logger = logger,
         _eventBus = eventBus,
         _serversRepository = serversRepository,
-        _analyticsManager = analyticsManager,
         _platformSettingsService = platformSettingsService;
 
   AbstractTimerControl? _timerControl;
@@ -73,7 +67,6 @@ class VpnManager implements AbstractVpnManager {
   final Talker _logger;
   final EventBus _eventBus;
   final AbstractServersRepository _serversRepository;
-  final AbstractAnalyticsManager _analyticsManager;
   final AbstractPlatformSettingsService _platformSettingsService;
 
   StreamSubscription<dynamic>? statusSubscription;
@@ -191,10 +184,6 @@ class VpnManager implements AbstractVpnManager {
         preferences: _preferences,
       ).run();
 
-      // The server the user was on when the probe started — if failover ends
-      // up switching away or declaring the tunnel unhealthy, this is the node
-      // that died.
-      final probedServerIp = await _preferences.currentServerId;
       final pinned = await _preferences.serverSelectionPinned;
 
       final result = await VpnAutoFailover(
@@ -211,29 +200,6 @@ class VpnManager implements AbstractVpnManager {
         // chose it; an auto-selected country is free to be searched fully.
         pinned: pinned,
       );
-
-      if (result.healthy == false) {
-        unawaited(_reportNodeDeath(
-          deadServerIp: probedServerIp,
-          switchedToIp: null,
-          failoverResult: 'no_healthy_candidate',
-          serversTried: result.serversTried,
-        ));
-      } else if (result.healthy == true &&
-          result.currentServerFailed &&
-          probedServerIp != null &&
-          result.activeHost != null &&
-          result.activeHost != probedServerIp) {
-        // The selected node was dead but traffic was rescued through another
-        // exit — either by our failover switch or by sing-box's urltest
-        // re-routing (auto mode). Both are a death of the probed node.
-        unawaited(_reportNodeDeath(
-          deadServerIp: probedServerIp,
-          switchedToIp: result.activeHost,
-          failoverResult: 'switched',
-          serversTried: result.serversTried,
-        ));
-      }
 
       // Sync the UI to the server actually routing traffic (auto-select or a
       // failover switch can differ from what the user picked). Display-only —
@@ -259,73 +225,6 @@ class VpnManager implements AbstractVpnManager {
       _logger.error('[VPN] Post-connect verification failed', e, stackTrace);
     } finally {
       _autoFailoverRunning = false;
-    }
-  }
-
-  /// Reports a `vpn_node_death` to analytics: the tunnel handshake succeeded
-  /// but [deadServerIp] carries no real traffic (dashboard shows it green, the
-  /// VPN data port is dead). Never throws — analytics must not affect the VPN.
-  Future<void> _reportNodeDeath({
-    required String? deadServerIp,
-    required String? switchedToIp,
-    required String failoverResult,
-    required int serversTried,
-  }) async {
-    try {
-      var serverCountry = '';
-      var serverCity = '';
-      var serverPort = '';
-      try {
-        final servers = await _serversRepository.getServers(force: false);
-        for (final s in servers) {
-          if (s.ip == deadServerIp) {
-            serverCountry = s.region.countryCode;
-            if (s is SystemVpnConfiguration) serverCity = s.city;
-            if (s.configurations.isNotEmpty) {
-              final port = Uri.parse(s.configurations.first.url).port;
-              if (port != 0) serverPort = port.toString();
-            }
-            break;
-          }
-        }
-      } catch (_) {
-        // Server list unavailable — send the event with what we have.
-      }
-
-      var networkType = 'unknown';
-      try {
-        final results = await Connectivity().checkConnectivity();
-        if (results.isNotEmpty) {
-          networkType = results.map((r) => r.name).join(',');
-        }
-      } catch (_) {}
-
-      final protocol = await _preferences.currentProtocol;
-
-      await _analyticsManager.sendEvent(
-        AnalyticsEventNames.vpn_node_death,
-        {
-          AnalyticsProps.serverIp: deadServerIp ?? '',
-          AnalyticsProps.serverCountry: serverCountry,
-          AnalyticsProps.serverCity: serverCity,
-          AnalyticsProps.serverPort: serverPort,
-          // Never-set preference means the app default (auto).
-          AnalyticsProps.protocol: protocol?.name ?? 'auto',
-          AnalyticsProps.failureType: 'traffic_blackhole',
-          AnalyticsProps.failureStage: 'post_connect_probe',
-          AnalyticsProps.tunnelEstablished: 'true',
-          AnalyticsProps.probePassed: 'false',
-          AnalyticsProps.networkType: networkType,
-          AnalyticsProps.failoverResult: failoverResult,
-          AnalyticsProps.failoverToIp: switchedToIp ?? '',
-          AnalyticsProps.serversTried: serversTried.toString(),
-        },
-      );
-      _logger.info(
-        '[VPN] node death reported — server=$deadServerIp result=$failoverResult',
-      );
-    } catch (e) {
-      _logger.warning('[VPN] failed to report node death: $e');
     }
   }
 

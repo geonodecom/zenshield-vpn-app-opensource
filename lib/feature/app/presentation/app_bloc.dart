@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -12,49 +11,34 @@ import 'package:zenshield/core/event_bus_events/auto_select_requested.dart';
 import 'package:zenshield/core/event_bus_events/on_current_server_updated.dart';
 import 'package:zenshield/core/event_bus_events/tunnel_health_changed.dart';
 import 'package:zenshield/core/event_bus_events/vpn_state_changed.dart';
-import 'package:zenshield/core/managers/analytics_events.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
-import 'package:zenshield/core/managers/analytics_schema.dart';
-import 'package:zenshield/core/managers/appsflyer_manager.dart';
 import 'package:zenshield/di/injection_container.dart';
 import 'package:zenshield/core/preferences.dart';
 import 'package:zenshield/core/services/platform_settings_service.dart';
 import 'package:zenshield/feature/connection/data/model/connection_status/connection_status.dart';
 import 'package:zenshield/feature/servers/data/model/vpn_configuration/vpn_configuration.dart';
 import 'package:zenshield/feature/servers/domain/repositories/servers_repository.dart';
-import 'package:zenshield/core/managers/geonode_sdk_manager.dart';
-import 'package:zenshield/feature/auth/data/auth_user_use_case.dart';
 import 'package:zenshield/feature/vpn_connection/domain/repositories/vpn_manager.dart';
 import 'package:zenshield/core/models/protocols.dart';
-// ignore: implementation_imports
-import 'package:dart_peer_repo/src/classes/singbox_monitor.dart';
+import 'package:zenshield/core/utils/singbox_monitor.dart';
 import 'package:zenshield/feature/app/presentation/app_side_effect.dart';
 import 'package:zenshield/feature/app/presentation/state/app_state.dart';
 import 'package:zenshield/core/utils/aggressive_oem_detector.dart';
-import 'package:zenshield/core/utils/mixins.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
 part 'app_event.dart';
 
-class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
-    with AnalyticsEventSender {
+class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect> {
   AppBloc({
     required AbstractVpnManager vpnManager,
     required EventBus eventBus,
     required Preferences preferences,
     required Talker logger,
-    required AbstractAnalyticsManager analyticsManager,
     required AbstractPlatformSettingsService platformSettingsService,
-    required AbstractGeonodeSdkManager geonodeSdkManager,
-    required AbstractAuthUserUseCase authUserUseCase,
   })  : _vpnManager = vpnManager,
         _eventBus = eventBus,
         _preferences = preferences,
         _logger = logger,
-        _analyticsManager = analyticsManager,
         _platformSettingsService = platformSettingsService,
-        _geonodeSdkManager = geonodeSdkManager,
-        _authUserUseCase = authUserUseCase,
         super(AppState.initial()) {
     on<InitialEvent>(_onInitialEvent);
     on<SelectProtocolEvent>(_onSelectProtocol);
@@ -62,7 +46,6 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
     on<UpdateVpnStateEvent>(_onVpnStateChanged);
     on<TurnOnVpnTappedEvent>(_onTurnOnVpn);
     on<TurnOffVpnTappedEvent>(_onTurnOffVpn);
-    on<ZenSdkChangedEvent>(_onZenSdkChanged);
     on<ActiveServerResolvedEvent>(_onActiveServerResolved);
     on<TunnelHealthChangedEvent>(_onTunnelHealthChanged);
     on<AutoSelectRequestedAppEvent>(_onAutoSelectRequested);
@@ -100,10 +83,7 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
   final EventBus _eventBus;
   final Preferences _preferences;
   final Talker _logger;
-  final AbstractAnalyticsManager _analyticsManager;
   final AbstractPlatformSettingsService _platformSettingsService;
-  final AbstractGeonodeSdkManager _geonodeSdkManager;
-  final AbstractAuthUserUseCase _authUserUseCase;
 
   // Subscriptions
   StreamSubscription<OnCurrentServerUpdated>?
@@ -151,9 +131,6 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
     return super.close();
   }
 
-  @override
-  AbstractAnalyticsManager get analyticsManager => _analyticsManager;
-
   Future<void> _onInitialEvent(
     InitialEvent event,
     Emitter<AppState> emit,
@@ -170,14 +147,12 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
     await _preferences.setServerSelectionPinned(false);
 
     final savedProtocol = await _preferences.currentProtocol;
-    final savedZenSdkEnabled = await _preferences.zenSdkEnabled;
 
     final initialProtocol = savedProtocol ?? Protocols.auto;
 
     emit(
       state.copyWith(
         protocol: initialProtocol,
-        zenSdkEnabled: savedZenSdkEnabled,
         serverSelectionPinned: false,
       ),
     );
@@ -226,18 +201,6 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
             );
             _connectTapAt = null;
           }
-          sendAnalyticsEvent(
-            AnalyticsEventNames.vpn_connected,
-            {
-              'protocol': state.protocol.name,
-              if (state.selectedServer?.ip != null) 'server_id': state.selectedServer!.ip,
-              if (state.selectedServer?.region.countryCode != null)
-                'server_region': state.selectedServer!.region.countryCode,
-            },
-          );
-
-          // AppsFlyer funnel event: once-per-install handled inside AppsFlyerManager.
-          unawaited(getIt<AbstractAppsFlyerManager>().logVpnConnected());
         }
         _isServerSwitching = false;
         SingboxMonitor().disableForceCheckMode();
@@ -255,12 +218,6 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
           await _switchServer(queued);
         }
       case Disconnected():
-        if (previous is Connected || previous is Disconnecting) {
-          sendAnalyticsEvent(
-            AnalyticsEventNames.vpn_disconnected,
-            null,
-          );
-        }
         SingboxMonitor().disableForceCheckMode();
         if (_useDisconnectReconnectForServerSwitch && _pendingServerChange) {
           _pendingServerChange = false;
@@ -334,10 +291,6 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
       }
     }
 
-    sendAnalyticsEvent(
-      AnalyticsEventNames.vpn_connect_requested,
-      {'protocol': state.protocol.name},
-    );
     SingboxMonitor().enableForceCheckMode();
     final myGeneration = _switchGeneration;
     final connectStartedAt = DateTime.now();
@@ -379,16 +332,6 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
         st,
       );
       _connectTapAt = null;
-      sendAnalyticsEvent(
-        AnalyticsEventNames.vpn_connection_failed,
-        await _vpnFailureProps(
-          failureType: _failureTypeForPlatformError(e),
-          errorCode: e.code,
-          errorMessage: e.message ?? '',
-          errorDetails: e.details?.toString() ?? '',
-          startedAt: connectStartedAt,
-        ),
-      );
       if (e.code == 'VPN_ERROR') {
         final details = e.details;
         final errorType = details != null && details['errorType'] is String
@@ -428,99 +371,11 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
         st,
       );
       _connectTapAt = null;
-      sendAnalyticsEvent(
-        AnalyticsEventNames.vpn_connection_failed,
-        await _vpnFailureProps(
-          failureType: _failureTypeForError(e),
-          errorCode: e.runtimeType.toString(),
-          errorMessage: e.toString(),
-          startedAt: connectStartedAt,
-        ),
-      );
       produceSideEffect(ShowVpnErrorDialog(
         title: 'Connection Error',
         message: e.toString().replaceFirst('Exception: ', ''),
       ));
     }
-  }
-
-  /// Event properties for `vpn_connection_failed`, built so the backend can
-  /// answer "who, from where, to which server, and why" from the event alone.
-  Future<Map<String, String>> _vpnFailureProps({
-    required String failureType,
-    required String errorCode,
-    required String errorMessage,
-    String errorDetails = '',
-    required DateTime startedAt,
-  }) async {
-    final server = state.selectedServer;
-
-    var serverPort = '';
-    if (server != null && server.configurations.isNotEmpty) {
-      try {
-        final details = server.configurations.firstWhere(
-          (c) => c.protocol.name == state.protocol.name,
-          orElse: () => server.configurations.first,
-        );
-        final port = Uri.parse(details.url).port;
-        if (port != 0) serverPort = port.toString();
-      } catch (_) {
-        // Unparseable link — leave port empty rather than fail the event.
-      }
-    }
-
-    var networkType = 'unknown';
-    try {
-      final results = await Connectivity().checkConnectivity();
-      if (results.isNotEmpty) {
-        networkType = results.map((r) => r.name).join(',');
-      }
-    } catch (_) {}
-
-    return {
-      AnalyticsProps.errorCode: errorCode,
-      AnalyticsProps.errorMessage: errorMessage,
-      AnalyticsProps.errorDetails: errorDetails,
-      'platform': Platform.operatingSystem,
-      AnalyticsProps.protocol: state.protocol.name,
-      AnalyticsProps.serverIp: server?.ip ?? _connectServerIp ?? '',
-      AnalyticsProps.serverCountry: server?.region.countryCode ?? '',
-      AnalyticsProps.serverCity:
-          server is SystemVpnConfiguration ? server.city : '',
-      AnalyticsProps.serverPort: serverPort,
-      AnalyticsProps.failureType: failureType,
-      AnalyticsProps.failureStage: 'initial_connect',
-      // The tunnel never came up on this path; node death (tunnel up, no
-      // traffic) is reported separately as `vpn_node_death` by VpnManager.
-      AnalyticsProps.tunnelEstablished: 'false',
-      AnalyticsProps.probePassed: 'false',
-      AnalyticsProps.networkType: networkType,
-      AnalyticsProps.connectDurationMs:
-          DateTime.now().difference(startedAt).inMilliseconds.toString(),
-    };
-  }
-
-  String _failureTypeForPlatformError(PlatformException e) {
-    if (e.code == 'PERMISSION_DENIED') return 'permission_denied';
-    final text = '${e.code} ${e.message ?? ''}'.toLowerCase();
-    if (text.contains('timeout') || text.contains('timed out')) {
-      return 'timeout';
-    }
-    if (text.contains('refused')) return 'connection_refused';
-    if (e.code == 'VPN_ERROR' || e.code == 'SETUP_CONNECTION') {
-      return 'setup_failed';
-    }
-    return 'connect_failed';
-  }
-
-  String _failureTypeForError(Exception e) {
-    final text = e.toString().toLowerCase();
-    if (text.contains('timeout') || text.contains('timed out')) {
-      return 'timeout';
-    }
-    if (text.contains('refused')) return 'connection_refused';
-    if (text.contains('permission')) return 'permission_denied';
-    return 'connect_failed';
   }
 
   Future<void> _onTurnOffVpn(
@@ -542,17 +397,9 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
     SelectProtocolEvent event,
     Emitter<AppState> emit,
   ) async {
-    final previousProtocol = state.protocol;
     await _preferences.setCurrentProtocol(event.protocol);
 
     _logger.info('Protocol changed to ${event.protocol}');
-    sendAnalyticsEvent(
-      AnalyticsEventNames.protocol_changed,
-      {
-        'protocol_from': previousProtocol.name,
-        'protocol_to': event.protocol.name,
-      },
-    );
     emit(state.copyWith(protocol: event.protocol));
   }
 
@@ -586,15 +433,6 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
     Emitter<AppState> emit,
   ) async {
     _logger.info('Server changed to ${event.server}');
-    if (event.server != null) {
-      sendAnalyticsEvent(
-        AnalyticsEventNames.server_selected,
-        {
-          'server_id': event.server!.ip,
-          'server_region': event.server!.region.countryCode,
-        },
-      );
-    }
 
     await _preferences.setCurrentServerId(event.server?.ip ?? '');
     if (event.manual) {
@@ -692,25 +530,5 @@ class AppBloc extends SideEffectBloc<AppEvent, AppState, AppSideEffect>
       );
     }
     emit(state.copyWith(tunnelHealthy: event.healthy));
-  }
-
-  Future<void> _onZenSdkChanged(
-    ZenSdkChangedEvent event,
-    Emitter<AppState> emit,
-  ) async {
-    final isEnabled = event.value;
-    _logger.info('ZenSDK changed to $isEnabled');
-    await _preferences.setZenSdkEnabled(isEnabled);
-
-    if (isEnabled) {
-      final userId = await _authUserUseCase.getUserId();
-      if (userId != null && userId.isNotEmpty) {
-        await _geonodeSdkManager.connectForUser(userId);
-      }
-    } else {
-      await _geonodeSdkManager.setSharingEnabled(false);
-    }
-    emit(state.copyWith(zenSdkEnabled: isEnabled));
-    // Removed legacy analytics event; canonical set only.
   }
 }

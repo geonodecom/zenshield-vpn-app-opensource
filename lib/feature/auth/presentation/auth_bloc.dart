@@ -7,17 +7,10 @@ import 'package:zenshield/config/constants/urls.dart';
 import 'package:zenshield/core/event_bus_events/on_deep_link_error.dart';
 import 'package:zenshield/core/event_bus_events/on_email_verification_code_received.dart';
 import 'package:zenshield/core/event_bus_events/on_forgot_password_verification_code_received.dart';
-import 'package:zenshield/core/managers/analytics_events.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
-import 'package:zenshield/core/managers/appsflyer_manager.dart';
-import 'package:zenshield/core/preferences.dart';
-import 'package:zenshield/di/injection_container.dart';
 import 'package:zenshield/core/utils/utils.dart';
 import 'package:zenshield/core/utils/platform_utils.dart';
 import 'package:zenshield/feature/auth/data/auth_user_use_case.dart';
-import 'package:zenshield/feature/auth/data/login_error_message_use_case.dart';
 import 'package:zenshield/feature/auth/data/model/auth_models.dart';
-import 'package:zenshield/feature/agreements/domain/useCase/agreement_use_case.dart';
 import 'package:zenshield/feature/deep_links/domain/deep_link_error.dart';
 import 'package:zenshield/feature/auth/presentation/auth_side_effect.dart';
 import 'package:zenshield/feature/auth/presentation/state/auth_state.dart';
@@ -29,19 +22,13 @@ import 'package:window_manager/window_manager.dart';
 part 'auth_event.dart';
 
 class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
-    with LaunchUrl<AuthEvent, AuthState, AuthSideEffect>, AnalyticsEventSender {
+    with LaunchUrl<AuthEvent, AuthState, AuthSideEffect> {
   AuthBloc({
     required Talker logger,
     required AbstractAuthUserUseCase authUseCase,
-    required AbstractAnalyticsManager analyticsManager,
-    required AbstractAgreementUseCase agreementUseCase,
-    required AbstractLoginErrorMessageUseCase loginErrorMessageUseCase,
     required EventBus eventBus,
   }) : _logger = logger,
        _authUseCase = authUseCase,
-       _analyticsManager = analyticsManager,
-       _agreementUseCase = agreementUseCase,
-       _loginErrorMessageUseCase = loginErrorMessageUseCase,
        _eventBus = eventBus,
        super(AuthState.initial()) {
     _logger.info('AuthBloc initialized');
@@ -59,7 +46,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
     on<AuthFacebookSignInPressed>(_onFacebookSignInPressed);
     on<AuthAppleSignInPressed>(_onAppleSignInPressed);
     on<AuthTermsAcceptedChanged>(_onTermsAcceptedChanged);
-    on<AuthBandwidthSharingPolicyTapped>(_onBandwidthSharingPolicyTapped);
     on<AuthDeepLinkErrorEvent>(_onDeepLinkError);
     on<AuthEmailVerificationCodeReceivedEvent>(
       _onEmailVerificationCodeReceived,
@@ -88,26 +74,7 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
   // Dependencies
   final Talker _logger;
   final AbstractAuthUserUseCase _authUseCase;
-  final AbstractAnalyticsManager _analyticsManager;
-  final AbstractAgreementUseCase _agreementUseCase;
   final EventBus _eventBus;
-  final AbstractLoginErrorMessageUseCase _loginErrorMessageUseCase;
-
-  /// When the backend reports no pending agreement, that can only mean this
-  /// account/device already accepted before (declining is client-only, never
-  /// sent to the backend — see AuthBloc's bandwidth-sharing decline and
-  /// OnboardingProgressBloc._onBandwidthSharingDeclined). Re-sync the local
-  /// flag — it may have been reset (reinstall, new device) — then route to
-  /// the Geonode key-setup screen if the build/device still needs those
-  /// keys, same as SplashBloc does for an already-authorized relaunch.
-  Future<AuthSideEffect> _homeOrGeonodeKeySetupSideEffect() async {
-    final preferences = getIt<Preferences>();
-    await preferences.setZenSdkEnabled(true);
-    if (await preferences.shouldPromptGeonodeKeySetup) {
-      return AuthNavigateToGeonodeKeySetup();
-    }
-    return AuthNavigateToHome();
-  }
 
   // Subscriptions
   StreamSubscription<OnDeepLinkError>? _deepLinkErrorSubscription;
@@ -115,19 +82,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
   _emailVerificationCodeSubscription;
   StreamSubscription<OnForgotPasswordCodeReceived>?
   _forgotPasswordCodeSubscription;
-
-  @override
-  AbstractAnalyticsManager get analyticsManager => _analyticsManager;
-
-  Future<void> _identifyLoggedInUser(String distinctId, {String? email}) async {
-    if (distinctId.isEmpty) return;
-    var resolved = email?.trim();
-    if (resolved == null || resolved.isEmpty) {
-      resolved = (await _authUseCase.getStoredAccountEmail())?.trim();
-    }
-    final e = distinctId.contains('@') ? distinctId : resolved;
-    await _analyticsManager.identify(distinctId: distinctId, email: e);
-  }
 
   @override
   Future<void> close() async {
@@ -171,10 +125,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
 
   Future<bool> _handleAuthOperation({
     required Future<void> Function() operation,
-    required AnalyticsEventNames successEventName,
-    required AnalyticsEventNames failureEventName,
-    required Map<String, String>? successParams,
-    Map<String, String>? failureExtras,
     required String errorMessage,
     required AuthSideEffect errorSideEffect,
     required Emitter<AuthState> emit,
@@ -185,17 +135,10 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
       await operation();
       _logger.info('Operation successful');
 
-      sendAnalyticsEvent(successEventName, successParams);
-
       emit(state.copyWith(isLoading: false, isSuccess: true));
       return true;
     } catch (e) {
       _logger.warning('Operation failed: $e');
-
-      sendAnalyticsEvent(failureEventName, {
-        'failure_reason': _loginErrorMessageUseCase.getShortMessage(e),
-        if (failureExtras != null) ...failureExtras,
-      });
 
       emit(state.copyWith(isLoading: false));
       if (!_isEmailEmploymentError(e)) {
@@ -207,11 +150,8 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
 
   Future<void> _launchPolicyUrl({
     required String languageCode,
-    required AnalyticsEventNames analyticsEventName,
     required Uri Function({required String languageCode}) urlBuilder,
   }) async {
-    sendAnalyticsEvent(analyticsEventName, {'language': languageCode});
-
     _logger.info('URL launch with language code: $languageCode');
     final url = urlBuilder(languageCode: languageCode);
     await launchExternalUrl(url);
@@ -265,34 +205,12 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
       await _authUseCase.login(event.email, event.password);
 
       _logger.info('Login successful');
-      final userId = await _authUseCase.getUserId();
-      if (userId != null && userId.isNotEmpty) {
-        await _identifyLoggedInUser(userId, email: event.email);
-      }
-      sendAnalyticsEvent(AnalyticsEventNames.login_succeeded, {
-        'auth_method': 'password',
-      });
 
       emit(state.copyWith(isLoading: false, isSuccess: true));
 
-      final agreementsResponse = await _agreementUseCase
-          .getAgreementsResponse();
-
-      if (agreementsResponse.agreement == null) {
-        produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
-        return;
-      }
-
-      produceSideEffect(
-        AuthNavigateToOnboarding(agreementsResponse: agreementsResponse),
-      );
+      produceSideEffect(AuthNavigateToHome());
     } catch (e) {
       _logger.warning('Login failed: $e');
-      final shortReason = _loginErrorMessageUseCase.getShortMessage(e);
-      sendAnalyticsEvent(AnalyticsEventNames.login_failed, {
-        'auth_method': 'password',
-        'failure_reason': shortReason,
-      });
 
       emit(state.copyWith(isLoading: false));
 
@@ -359,10 +277,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
           rethrow;
         }
       },
-      successEventName: AnalyticsEventNames.sign_up_submitted,
-      failureEventName: AnalyticsEventNames.login_failed,
-      failureExtras: const {'auth_method': 'password'},
-      successParams: {'auth_type': 'register'},
       errorMessage: 'Error sending deeplink',
       errorSideEffect: ShowRegistrationErrorDialog(),
       emit: emit,
@@ -371,14 +285,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
     if (isSuccess) {
       emit(state.copyWith(isSuccess: false));
       _unsubscribeFromDeepLinks();
-
-      // AppsFlyer funnel event (standard): af_complete_registration
-      // Fire once-per-install handled inside AppsFlyerManager.
-      unawaited(
-        getIt<AbstractAppsFlyerManager>().logCompleteRegistration(
-          registrationMethod: 'email',
-        ),
-      );
 
       produceSideEffect(AuthNavigateToCheckInbox(email: event.email));
     }
@@ -470,7 +376,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
   ) async {
     await _launchPolicyUrl(
       languageCode: event.languageCode,
-      analyticsEventName: AnalyticsEventNames.app_opened,
       urlBuilder: Urls.endUserLicenseAgreement,
     );
   }
@@ -481,7 +386,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
   ) async {
     await _launchPolicyUrl(
       languageCode: event.languageCode,
-      analyticsEventName: AnalyticsEventNames.app_opened,
       urlBuilder: Urls.privacyPolicy,
     );
   }
@@ -496,13 +400,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
       await _authUseCase.authWithGoogle();
 
       _logger.info('Google sign in successful');
-      final userId = await _authUseCase.getUserId();
-      if (userId != null && userId.isNotEmpty) {
-        await _identifyLoggedInUser(userId);
-      }
-      sendAnalyticsEvent(AnalyticsEventNames.login_succeeded, {
-        'auth_method': 'google',
-      });
 
       if (PlatformUtils.isDesktop) {
         await windowManager.show();
@@ -511,24 +408,9 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
 
       emit(state.copyWith(isSuccess: true));
 
-      final agreementsResponse = await _agreementUseCase
-          .getAgreementsResponse();
-
-      if (agreementsResponse.agreement == null) {
-        produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
-        return;
-      }
-
-      produceSideEffect(
-        AuthNavigateToOnboarding(agreementsResponse: agreementsResponse),
-      );
+      produceSideEffect(AuthNavigateToHome());
     } catch (e) {
       _logger.warning('Google sign in failed: $e');
-      final shortReason = _loginErrorMessageUseCase.getShortMessage(e);
-      sendAnalyticsEvent(AnalyticsEventNames.login_failed, {
-        'auth_method': 'google',
-        'failure_reason': shortReason,
-      });
       produceSideEffect(ShowLoginErrorDialog());
     }
   }
@@ -543,13 +425,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
       await _authUseCase.authWithFacebook();
 
       _logger.info('Facebook sign in successful');
-      final userId = await _authUseCase.getUserId();
-      if (userId != null && userId.isNotEmpty) {
-        await _identifyLoggedInUser(userId);
-      }
-      sendAnalyticsEvent(AnalyticsEventNames.login_succeeded, {
-        'auth_method': 'facebook',
-      });
 
       if (PlatformUtils.isDesktop) {
         await windowManager.show();
@@ -558,24 +433,9 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
 
       emit(state.copyWith(isSuccess: true));
 
-      final agreementsResponse = await _agreementUseCase
-          .getAgreementsResponse();
-
-      if (agreementsResponse.agreement == null) {
-        produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
-        return;
-      }
-
-      produceSideEffect(
-        AuthNavigateToOnboarding(agreementsResponse: agreementsResponse),
-      );
+      produceSideEffect(AuthNavigateToHome());
     } catch (e) {
       _logger.warning('Facebook sign in failed: $e');
-      final shortReason = _loginErrorMessageUseCase.getShortMessage(e);
-      sendAnalyticsEvent(AnalyticsEventNames.login_failed, {
-        'auth_method': 'facebook',
-        'failure_reason': shortReason,
-      });
 
       produceSideEffect(ShowLoginErrorDialog());
     }
@@ -591,34 +451,12 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
       await _authUseCase.authWithApple();
 
       _logger.info('Apple sign in successful');
-      final userId = await _authUseCase.getUserId();
-      if (userId != null && userId.isNotEmpty) {
-        await _identifyLoggedInUser(userId);
-      }
-      sendAnalyticsEvent(AnalyticsEventNames.login_succeeded, {
-        'auth_method': 'apple',
-      });
 
       emit(state.copyWith(isSuccess: true));
 
-      final agreementsResponse = await _agreementUseCase
-          .getAgreementsResponse();
-
-      if (agreementsResponse.agreement == null) {
-        produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
-        return;
-      }
-
-      produceSideEffect(
-        AuthNavigateToOnboarding(agreementsResponse: agreementsResponse),
-      );
+      produceSideEffect(AuthNavigateToHome());
     } catch (e) {
       _logger.warning('Apple sign in failed: $e');
-      final shortReason = _loginErrorMessageUseCase.getShortMessage(e);
-      sendAnalyticsEvent(AnalyticsEventNames.login_failed, {
-        'auth_method': 'apple',
-        'failure_reason': shortReason,
-      });
       produceSideEffect(ShowLoginErrorDialog());
     }
   }
@@ -629,68 +467,6 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
   ) {
     _logger.info('Terms accepted changed: ${event.isAccepted}');
     emit(state.copyWith(isTermsAccepted: event.isAccepted));
-  }
-
-  Future<void> _onBandwidthSharingPolicyTapped(
-    AuthBandwidthSharingPolicyTapped event,
-    Emitter<AuthState> emit,
-  ) async {
-    _logger.info('Bandwidth Sharing Policy opened: ${event.languageCode}');
-    if (PlatformUtils.isDesktop) {
-      _launchPolicyUrl(
-        languageCode: event.languageCode,
-        analyticsEventName: AnalyticsEventNames.app_opened,
-        urlBuilder: Urls.bandwidthSharingPolicy,
-      );
-    }
-
-    // Removed bandwidth for now because it needs an accesstoken to load it but we get it only after login
-    // final policyUrl = Urls.bandwidthSharingPolicy(
-    //   languageCode: event.languageCode,
-    // ).toString();
-    // try {
-    //   emit(state.copyWith(isLoadingAgreement: true));
-
-    //   final agreementsResponse =
-    //       await _agreementUseCase.getAgreementsResponse();
-
-    //   final currentAgreement = agreementsResponse.agreement;
-
-    //   emit(
-    //     state.copyWith(
-    //       currentAgreement: currentAgreement,
-    //       isLoadingAgreement: false,
-    //     ),
-    //   );
-
-    //   // Only show modal on mobile platforms
-    //   if (!PlatformUtils.isDesktop) {
-    //     produceSideEffect(
-    //       ShowBandwidthSharingPolicyModal(
-    //         url: policyUrl,
-    //         htmlContent: currentAgreement?.text,
-    //       ),
-    //     );
-    //   }
-    // } catch (e, stackTrace) {
-    //   _logger.error('Failed to load agreement', e, stackTrace);
-    //   emit(state.copyWith(isLoadingAgreement: false));
-
-    // If user is not logged in, show modal with URL directly (without HTML content)
-    // On desktop, fallback to external URL
-    //   if (PlatformUtils.isDesktop) {
-    //     await launchExternalUrl(
-    //       Urls.bandwidthSharingPolicy(languageCode: event.languageCode),
-    //     );
-    //   } else {
-    //     produceSideEffect(
-    //       ShowBandwidthSharingPolicyModal(
-    //         url: policyUrl,
-    //         htmlContent: null,
-    //       ),
-    //     );
-    //   }
-    // }
   }
 
   void _onDeepLinkError(AuthDeepLinkErrorEvent event, Emitter<AuthState> emit) {
@@ -746,25 +522,8 @@ class AuthBloc extends SideEffectBloc<AuthEvent, AuthState, AuthSideEffect>
       );
 
       _logger.info('Verification code verified');
-      final userId = await _authUseCase.getUserId();
-      if (userId != null && userId.isNotEmpty) {
-        await _identifyLoggedInUser(userId, email: session.email);
-      }
 
-      final agreementsResponse = await _agreementUseCase
-          .getAgreementsResponse();
-
-      _logger.info(
-        'Has pending agreements: ${agreementsResponse.agreement != null}',
-      );
-      if (agreementsResponse.agreement != null) {
-        produceSideEffect(
-          AuthNavigateToOnboarding(agreementsResponse: agreementsResponse),
-        );
-        return;
-      }
-
-      produceSideEffect(await _homeOrGeonodeKeySetupSideEffect());
+      produceSideEffect(AuthNavigateToHome());
     } catch (e, stackTrace) {
       _logger.error('Failed to verify code', e, stackTrace);
       produceSideEffect(ShowDeepLinkVerificationError());

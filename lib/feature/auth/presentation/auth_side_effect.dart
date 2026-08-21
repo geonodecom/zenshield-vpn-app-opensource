@@ -1,15 +1,6 @@
-import 'package:zenshield/feature/agreements/data/model/agreements_response.dart';
-
 sealed class AuthSideEffect {}
 
 class AuthNavigateToHome extends AuthSideEffect {}
-
-class AuthNavigateToOnboarding extends AuthSideEffect {
-  AuthNavigateToOnboarding({required this.agreementsResponse});
-  final AgreementsResponse agreementsResponse;
-}
-
-class AuthNavigateToGeonodeKeySetup extends AuthSideEffect {}
 
 class AuthNavigateToSignUp extends AuthSideEffect {}
 
@@ -50,13 +41,6 @@ class ShowEmailNotConfirmedOrRegisteredErrorDialog extends AuthSideEffect {
 class AuthNavigateToCheckInbox extends AuthSideEffect {
   AuthNavigateToCheckInbox({required this.email});
   final String email;
-}
-
-class ShowBandwidthSharingPolicyModal extends AuthSideEffect {
-  ShowBandwidthSharingPolicyModal({required this.url, this.htmlContent});
-
-  final String url;
-  final String? htmlContent;
 }
 
 class ShowDeepLinkSessionDataMissingError extends AuthSideEffect {

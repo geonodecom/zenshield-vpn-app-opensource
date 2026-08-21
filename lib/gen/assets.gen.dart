@@ -21,10 +21,6 @@ class $AssetsImagesGen {
   /// File path: assets/images/appLogo.png
   AssetGenImage get appLogo => const AssetGenImage('assets/images/appLogo.png');
 
-  /// File path: assets/images/appUpdatedCloseIcon.png
-  AssetGenImage get appUpdatedCloseIcon =>
-      const AssetGenImage('assets/images/appUpdatedCloseIcon.png');
-
   /// File path: assets/images/apple.png
   AssetGenImage get apple => const AssetGenImage('assets/images/apple.png');
 
@@ -134,7 +130,6 @@ class $AssetsImagesGen {
   List<AssetGenImage> get values => [
     activeStar,
     appLogo,
-    appUpdatedCloseIcon,
     apple,
     arrow,
     authLogo,

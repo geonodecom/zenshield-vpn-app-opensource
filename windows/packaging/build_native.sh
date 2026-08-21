@@ -41,8 +41,17 @@ else
   trap 'rm -rf "$WORK_DIR"' EXIT
   echo "==> Building singbox-tunnel.exe from zenshield-windows-service"
   clone_ref "$WINDOWS_SERVICE_REPO" "$WORK_DIR/tunnel-service"
+  # go.mod's replace directives still point at private pre-open-source repo
+  # paths (github.com/highlight-apps/NPVPN-Sing-box and
+  # NPVPN-Singbox-Utils), which 404 for anyone outside that org. Repoint them
+  # at the public sibling checkouts, same fix already applied below for the
+  # DLL build.
+  clone_ref "$SINGBOX_FORK_REPO" "$WORK_DIR/zenshield-singbox-geonode-sdk-patch"
+  clone_ref "$SINGBOX_UTILS_REPO" "$WORK_DIR/zenshield-singbox-utils"
   (
     cd "$WORK_DIR/tunnel-service"
+    go mod edit -replace github.com/sagernet/sing-box=../zenshield-singbox-geonode-sdk-patch
+    go mod edit -replace github.com/npvpn/singboxUtils=../zenshield-singbox-utils
     CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build \
       -tags "with_utls,with_clash_api,with_gvisor" \
       -o "$OUT_EXE" .

@@ -1,13 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zenshield/config/constants/urls.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
 import 'package:zenshield/core/utils/platform_utils.dart';
 import 'package:zenshield/di/injection_container.dart';
-import 'package:zenshield/feature/agreements/domain/useCase/agreement_use_case.dart';
 import 'package:zenshield/gen/assets.gen.dart';
 import 'package:zenshield/l10n/app_localizations.dart';
 import 'package:zenshield/core/widgets/error_dialog.dart';
@@ -30,11 +26,7 @@ class AboutView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return BlocProvider(
-      create: (context) => AboutBloc(
-        logger: getIt<Talker>(),
-        analyticsManager: getIt<AbstractAnalyticsManager>(),
-        agreementUseCase: getIt<AbstractAgreementUseCase>(),
-      ),
+      create: (context) => AboutBloc(logger: getIt<Talker>()),
       child: BlocSideEffectListener<AboutBloc, AboutSideEffect>(
         listener: (context, sideEffect) async {
           if (sideEffect is NavigateToLogsSideEffect) {
@@ -310,16 +302,6 @@ class _AboutInfoSection extends StatelessWidget {
               l10n?.aboutWhatIsZenshieldDescription ??
               'Zenshield is a modern, community-powered VPN that protects your data while helping others stay secure.',
         ),
-        if (!Platform.isIOS)
-          _InfoBlock(
-            icon: Icons.swap_horiz_rounded,
-            title:
-                l10n?.aboutBandwidthSharingTitle ??
-                'Bandwidth Sharing Explanation',
-            description:
-                l10n?.aboutBandwidthSharingDescription ??
-                'Zenshield works by pooling unused bandwidth from devices in the network. This allows for:',
-          ),
       ],
     );
   }

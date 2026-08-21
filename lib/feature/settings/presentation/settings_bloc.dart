@@ -2,15 +2,12 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:zenshield/config/constants/secure_storage_keys.dart';
-import 'package:zenshield/config/constants/urls.dart';
-import 'package:zenshield/core/managers/analytics_events.dart';
-import 'package:zenshield/core/managers/analytics_manager.dart';
 import 'package:zenshield/core/services/platform_settings_service.dart';
 import 'package:zenshield/feature/auth/data/auth_user_use_case.dart';
 import 'package:zenshield/feature/connection/data/model/connection_status/connection_status.dart';
 import 'package:zenshield/feature/launch/domain/repositories/launch_on_startup_manager.dart';
 import 'package:zenshield/feature/user_info/domain/useCase/user_info_use_case.dart';
-import 'package:zenshield/core/managers/geonode_sdk_manager.dart';
+import 'package:zenshield/config/constants/urls.dart';
 import 'package:zenshield/feature/vpn_connection/domain/repositories/vpn_manager.dart';
 import 'package:zenshield/feature/settings/presentation/setting_side_effect.dart';
 import 'package:zenshield/feature/settings/presentation/state/settings_state.dart';
@@ -22,28 +19,22 @@ part 'settings_event.dart';
 
 class SettingsBloc
     extends SideEffectBloc<SettingsEvent, SettingsState, SettingsSideEffect>
-    with
-        LaunchUrl<SettingsEvent, SettingsState, SettingsSideEffect>,
-        AnalyticsEventSender {
+    with LaunchUrl<SettingsEvent, SettingsState, SettingsSideEffect> {
   SettingsBloc({
     required FlutterSecureStorage secureStorage,
     required Talker logger,
-    required AbstractAnalyticsManager analyticsManager,
     required AbstractLaunchOnStartupManager launchOnStartupManager,
     required AbstractUserInfoUseCase userInfoUseCase,
     required AbstractVpnManager vpnManager,
     required AbstractAuthUserUseCase authUseCase,
     required AbstractPlatformSettingsService platformSettingsService,
-    required AbstractGeonodeSdkManager geonodeSdkManager,
   }) : _secureStorage = secureStorage,
        _logger = logger,
-       _analyticsManager = analyticsManager,
        _launchOnStartupManager = launchOnStartupManager,
        _userInfoUseCase = userInfoUseCase,
        _vpnManager = vpnManager,
        _authUseCase = authUseCase,
        _platformSettingsService = platformSettingsService,
-       _geonodeSdkManager = geonodeSdkManager,
        super(SettingsState.initial()) {
     on<InitialLoadEvent>(_onInitialLoad);
     on<ProtocolTappedEvent>(_onProtocolTapped);
@@ -62,16 +53,11 @@ class SettingsBloc
   // Dependencies
   final FlutterSecureStorage _secureStorage;
   final Talker _logger;
-  final AbstractAnalyticsManager _analyticsManager;
   final AbstractLaunchOnStartupManager _launchOnStartupManager;
   final AbstractUserInfoUseCase _userInfoUseCase;
   final AbstractVpnManager _vpnManager;
   final AbstractAuthUserUseCase _authUseCase;
   final AbstractPlatformSettingsService _platformSettingsService;
-  final AbstractGeonodeSdkManager _geonodeSdkManager;
-
-  @override
-  AbstractAnalyticsManager get analyticsManager => _analyticsManager;
 
   Future<void> _onInitialLoad(
     InitialLoadEvent event,
@@ -133,10 +119,6 @@ class SettingsBloc
       if (_vpnManager.status == ConnectionStatus.connected()) {
         await _vpnManager.disableVpn();
       }
-      await _geonodeSdkManager.disconnect();
-      // Fire before reset() so the event is attributed to the logged-in user.
-      sendAnalyticsEvent(AnalyticsEventNames.logout_completed);
-      await _analyticsManager.reset();
       await _authUseCase.resetAuthorization();
 
       _logger.info('User logged out successfully');

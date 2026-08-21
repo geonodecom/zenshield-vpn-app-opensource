@@ -33,15 +33,6 @@ class OpenSupportCenterEvent extends AboutEvent {
   List<Object> get props => [languageCode];
 }
 
-class OpenBandwidthSharingPolicyEvent extends AboutEvent {
-  const OpenBandwidthSharingPolicyEvent(this.languageCode);
-
-  final String languageCode;
-
-  @override
-  List<Object> get props => [languageCode];
-}
-
 class OpenEulaEvent extends AboutEvent {
   const OpenEulaEvent(this.languageCode);
 

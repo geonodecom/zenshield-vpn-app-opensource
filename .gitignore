@@ -74,6 +74,7 @@ secrets.json
 /singbox-tunnel.exe
 /windows/runner/singbox-tunnel.exe
 /windows/core/zenshield_core.dll
+/windows/core/zenshield_core.h
 /android/app/libs/ZenshieldBox.aar
 /android/app/libs/ZenshieldBox-sources.jar
 /macos/zenshieldBox.xcframework/

@@ -9,90 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get onboardingPage1Title => 'A Free VPN Built on Trust';
-
-  @override
-  String get onboardingPage1Text =>
-      'Zenshield protects your privacy and stays free by securely sharing a small portion of unused bandwidth, never your personal data.';
-
-  @override
-  String get onboardingPage1TextIos =>
-      'Zenshield protects your privacy and keeps your online activity private. No subscription required.';
-
-  @override
-  String get onboardingPage2Title => 'Privacy and Transparency';
-
-  @override
-  String onboardingPage2Text(String eula, String privacyPolicy) {
-    return 'Before continuing, please review and agree to our $eula, $privacyPolicy. Zenshield collects limited account information, such as your email address, to provide and secure the service.';
-  }
-
-  @override
-  String get onboardingPage2Eula => 'End User License Agreement (EULA)';
-
-  @override
-  String get onboardingPage2PrivacyPolicy => 'Privacy Policy';
-
-  @override
-  String get onboardingPage2BandwidthSharingPolicy =>
-      'Bandwidth Sharing Policy';
-
-  @override
-  String onboardingPage2TextAndroid(
-    String eula,
-    String privacyPolicy,
-    String bandwidthSharingPolicy,
-  ) {
-    return 'Before continuing, please review and agree to our $eula, $privacyPolicy and $bandwidthSharingPolicy. Zenshield collects limited account information, such as your email address, to provide and secure the service.';
-  }
-
-  @override
-  String get onboardingPage3Title => 'Why Zenshield is Free';
-
-  @override
-  String get onboardingPage3Text =>
-      'Zenshield stays free because users share a small, encrypted portion of their unused internet connection. This shared bandwidth helps trusted businesses perform legitimate online tasks such as web indexing and data verification.\n\nYour personal data and browsing activity are never collected or exposed';
-
-  @override
-  String get onboardingPage3BandwidthSharing => 'Bandwidth Sharing Policy';
-
-  @override
   String get buttonContinue => 'Continue';
-
-  @override
-  String get buttonAgreeAndContinue => 'Agree & Continue';
-
-  @override
-  String get buttonIDisagree => 'I Disagree';
-
-  @override
-  String get bandwidthSharingModalTitle => 'Help Keep Zenshield Free';
-
-  @override
-  String get bandwidthSharingModalText1 =>
-      'Bandwidth sharing is optional. You can use Zenshield without it — you can turn it on or off any time.';
-
-  @override
-  String get bandwidthSharingModalText2 =>
-      'Zenshield stays free because users share a small, encrypted portion of their unused internet connection.';
-
-  @override
-  String get bandwidthSharingModalText3 =>
-      'This shared bandwidth helps trusted businesses perform legitimate online tasks such as web indexing and data verification.';
-
-  @override
-  String get bandwidthSharingModalText4 =>
-      'Your personal data and browsing activity are never collected or exposed. Learn more in our';
-
-  @override
-  String get bandwidthSharingModalButtonAgree => 'I Agree';
-
-  @override
-  String get bandwidthSharingModalButtonSubtext =>
-      'Allow app to use idle resources for network boost';
-
-  @override
-  String get bandwidthSharingModalButtonNotNow => 'Not now';
 
   @override
   String get emailHint => 'Enter your Gmail';
@@ -142,7 +59,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get termsAgreement =>
-      'I agree to the End User License Agreement (EULA), Privacy Policy and Bandwidth Sharing Policy.';
+      'I agree to the End User License Agreement (EULA), Privacy Policy.';
 
   @override
   String get termsAgreementIos =>
@@ -205,12 +122,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeConnect => 'Connect';
-
-  @override
-  String get homeZenSdkIsActive => 'ZenSDK is active';
-
-  @override
-  String get homeZenSdkIsDisabled => 'ZenSDK is disabled';
 
   @override
   String get homeConnected => 'Connected';
@@ -307,13 +218,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Zenshield is a free VPN that lets you access geo-restricted content, browse securely on public Wi-Fi, and keep your online activity private. No subscription required.';
 
   @override
-  String get aboutBandwidthSharingTitle => 'Bandwidth Sharing Policy';
-
-  @override
-  String get aboutBandwidthSharingDescription =>
-      'Zenshield is free because users contribute a small slice of their unused internet bandwidth to the Geonode data network. Your data is never accessed. Only network traffic is routed through your device.';
-
-  @override
   String get aboutLegalAndSupportTitle => 'Legal Policies';
 
   @override
@@ -324,9 +228,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aboutSupportCenter => 'Support Center';
-
-  @override
-  String get aboutBandwidthSharingPolicy => 'Bandwidth Sharing Policy';
 
   @override
   String get aboutEndUserLicenseAgreement => 'End User License Agreement';
@@ -397,23 +298,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rateAppPopupFeedbackSuffix => ' to tell us directly.';
 
   @override
-  String get updateRequiredPopupTitle => 'Update Required';
-
-  @override
-  String get updateRequiredPopupMessage1 =>
-      'Your current version of Zenshield VPN is\nout of date.';
-
-  @override
-  String get updateRequiredPopupMessage2 =>
-      'Please install the latest version to\ncontinue using the app securely and\nwithout interruptions.';
-
-  @override
-  String get updateRequiredPopupButtonDownload => 'Download Update';
-
-  @override
-  String get updateRequiredPopupButtonRemindLater => 'Remind Me Later';
-
-  @override
   String get resetPasswordTitle => 'Reset Password';
 
   @override
@@ -470,49 +354,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get emailEmploymentErrorText =>
       'The email you entered is already in use. Please try again.';
-
-  @override
-  String get appUpdateChecking => 'Checking for updates…';
-
-  @override
-  String get appUpdateDownloading => 'Downloading update';
-
-  @override
-  String get appUpdateInstalling => 'Installing';
-
-  @override
-  String get appUpdateRestarting => 'Restarting Zenshield';
-
-  @override
-  String get appUpdateError => 'Couldn\'t update right now';
-
-  @override
-  String get appUpdateRetry => 'Retry';
-
-  @override
-  String get appUpdateOpenAppAnyway => 'Open app anyway';
-
-  @override
-  String get updateAvailablePopupTitle => 'Update available';
-
-  @override
-  String get updateAvailablePopupMessage => 'A new version is available';
-
-  @override
-  String get updateAvailablePopupButtonUpdate => 'Update now';
-
-  @override
-  String get updateAvailablePopupButtonRemindLater => 'Remind me later';
-
-  @override
-  String updateAvailablePopupTimer(String time) {
-    return 'Restarting in $time';
-  }
-
-  @override
-  String homeAppWasUpdated(String version) {
-    return 'App was updated to version $version';
-  }
 
   @override
   String get appTitle => 'Zenshield';
